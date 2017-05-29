@@ -1,0 +1,37 @@
+{
+  "name": "adonis-vow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "DEBUG=adonis:vow node --harmony-async-await ./node_modules/.bin/japa",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "set DEBUG=adonis:vow && node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
+    "adonis-sink": "^1.0.2",
+    "coveralls": "^2.13.1",
+    "cz-conventional-changelog": "^2.0.0",
+    "japa": "git+https://github.com/thetutlage/japa.git#develop",
+    "japa-cli": "^1.0.1",
+    "nyc": "^10.3.2",
+    "standard": "^10.0.2"
+  },
+  "dependencies": {
+    "japa": "git+https://github.com/thetutlage/japa.git#develop",
+    "p-series": "^1.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
