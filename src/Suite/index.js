@@ -10,6 +10,8 @@
 */
 
 const { Test, Group } = require('japa/api')
+
+const Context = require('../Context')
 const props = require('../../lib/props')
 
 /**
@@ -41,6 +43,16 @@ class Suite {
      */
     this.traits = []
 
+    /**
+     * Suite context class to be used for adding getters
+     * or macros to the context. A new instance of each
+     * context is passed to tests.
+     *
+     * @attribute Context
+     *
+     * @type {Context}
+     */
+    this.Context = Context()
     this._explicitTimeout = null
   }
 
@@ -81,6 +93,11 @@ class Suite {
    */
   _addTest (title, callback, skip, regression) {
     const test = new Test(title, callback, props, skip, regression)
+    test.resolveArg((assert) => {
+      const ctx = new this.Context()
+      ctx.assert = assert
+      return ctx
+    })
 
     /**
      * Add timeout to the test when suite has timeout

@@ -113,7 +113,7 @@ test.group('Runner', (group) => {
     assert.deepEqual(called, ['trait 1', 'trait 2'])
   })
 
-  test('attach values to suite when running suite hooks', async (assert) => {
+  test('attach values to suite when running suite traits', async (assert) => {
     const suite = this.runner.suite('sample')
     const called = []
 
@@ -133,5 +133,68 @@ test.group('Runner', (group) => {
 
     await this.runner.run()
     assert.deepEqual(called, ['trait 1', 'trait 2', 'before', 'after'])
+  })
+
+  test('attach values to suite context via traits', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const called = []
+
+    suite.trait(function ({ Context }) {
+      Context.getter('foo', function () {
+        called.push('foo')
+        return 'bar'
+      })
+    })
+
+    suite.test('test', function ({ foo }) {
+      called.push(foo)
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['foo', 'bar'])
+  })
+
+  test('attach singleton values to suite context', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const called = []
+
+    suite.trait(function ({ Context }) {
+      Context.getter('foo', function () {
+        called.push('foo')
+        return 'bar'
+      }, true)
+    })
+
+    suite.test('test', function (ctx) {
+      called.push(ctx.foo)
+      called.push(ctx.foo)
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['foo', 'bar', 'bar'])
+  })
+
+  test('context should be mutated for suite using traits', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const suite1 = this.runner.suite('sample1')
+    const called = []
+
+    suite.trait(function ({ Context }) {
+      Context.getter('foo', function () {
+        called.push('foo')
+        return 'bar'
+      }, true)
+    })
+
+    suite.test('test', function (ctx) {
+      called.push(ctx.foo)
+    })
+
+    suite1.test('test', function (ctx) {
+      called.push(ctx.foo)
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['foo', 'bar', undefined])
   })
 })

@@ -86,3 +86,28 @@ In nutshell we have
 3. Context ( set for each test ) - Each tests has it's own context
 
 Rest all is JAPA and other tools
+
+
+## Using API Client
+
+```js
+const { triat, test } = use('Test/Suite')
+
+trait('Test/ApiClient')
+
+test('test api', ({ assert, client }) => {
+  await client.get('/')
+})
+```
+
+Api client
+
+```js
+const supertest = require('supertest')
+
+function (suite) {
+}
+```
+
+
+
