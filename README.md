@@ -1,6 +1,8 @@
 
 # Testing In AdonisJs
 
+> This readme is the scribble board for now. The final readme will be written later
+
 Testing in AdonisJs should be natural, simple and intutive enough that even a entry level guy can write tests.
 
 One should be able to do follow
