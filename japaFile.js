@@ -9,11 +9,6 @@
  * file that was distributed with this source code.
 */
 
-const Macroable = require('macroable')
+const cli = require('japa/cli')
 
-module.exports = function () {
-  class Context extends Macroable {}
-  Context._macros = {}
-  Context._getters = {}
-  return Context
-}
+cli.run('test/*/*.spec.js')

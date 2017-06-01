@@ -12,22 +12,34 @@
     "test:win": "set DEBUG=adonis:vow && node --harmony-async-await ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
+  "standard": {
+    "globals": [
+      "use"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "adonis-ace": "git+https://github.com/adonisjs/ace.git#dawn",
     "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
-    "adonis-sink": "^1.0.2",
+    "adonis-sink": "^1.0.3",
     "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
+    "fs-extra": "^3.0.1",
     "japa": "git+https://github.com/thetutlage/japa.git#develop",
     "japa-cli": "^1.0.1",
+    "node-res": "^3.0.1",
     "nyc": "^10.3.2",
     "standard": "^10.0.2"
   },
   "dependencies": {
+    "glob": "^7.1.2",
     "japa": "git+https://github.com/thetutlage/japa.git#develop",
-    "p-series": "^1.0.0"
+    "lodash": "^4.17.4",
+    "macroable": "^1.0.0",
+    "p-series": "^1.0.0",
+    "superagent": "^3.5.2"
   },
   "config": {
     "commitizen": {

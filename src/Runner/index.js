@@ -58,11 +58,14 @@ class TestRunner {
    */
   _runTraits (suite) {
     suite.traits.forEach((trait) => {
-      const { context, method } = resolver.resolveFunc(trait.action)
-      if (context) {
-        method.bind(context)
+      if (typeof (trait.action) === 'function') {
+        return trait.action(suite, trait.options)
       }
-      method(suite)
+      const resolvedTrait = resolver.resolve(trait.action)
+      if (resolvedTrait.handle) {
+        return resolvedTrait.handle(suite, trait.options)
+      }
+      resolvedTrait(suite, trait.options)
     })
   }
 
@@ -97,15 +100,6 @@ class TestRunner {
   suite (title) {
     const suite = new Suite(title)
     this._suites.push(suite)
-
-    /**
-     * Add grep term to the suite when grep term
-     * exists.
-     */
-    if (this._grepTerm) {
-      suite.grep(this._grepTerm)
-    }
-
     return suite
   }
 

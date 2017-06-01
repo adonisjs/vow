@@ -111,3 +111,36 @@ function (suite) {
 
 
 
+## Folder Structure
+
+```
+|__ Functional
+|_____ test.spec.js
+|__ Unit
+|_____ test.spec.js
+```
+
+Also one can have `vowFile.js` to define the cli behavior
+
+```js
+const cli = use('Test/Cli')
+
+cli.envFile('') // custom env file
+
+cli.filter(function () {
+})
+
+cli.grep('custom grep')
+
+cli.unit('') // define path to unit tests
+cli.functional('') // define path to functional tests
+
+// Add traits to suites globally
+cli.suite('glob pattern', function ({ path, trait }) {
+  if (path.endsWith('browser.js')) {
+    trait(['Test/Browser'], { driver: 'chrome' })
+  }
+})
+```
+
+

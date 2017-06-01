@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const Context = require('../src/Context')
+const Context = require('../../src/Context')
 
 test.group('Context', () => {
   test('return a isoloted class instance every time', (assert) => {

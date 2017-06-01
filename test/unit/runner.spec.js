@@ -10,19 +10,9 @@
 */
 
 const test = require('japa')
-const { setupResolver } = require('adonis-sink')
-const Runner = require('../src/Runner')
-
-const Env = {
-  get (key) {
-    switch (key) {
-      case 'REPORTER':
-        return function () {}
-      default:
-        return ''
-    }
-  }
-}
+const { setupResolver, Env } = require('adonis-sink')
+const { ioc } = require('adonis-fold')
+const Runner = require('../../src/Runner')
 
 test.group('Runner', (group) => {
   group.before(() => {
@@ -30,7 +20,9 @@ test.group('Runner', (group) => {
   })
 
   group.beforeEach(() => {
-    this.runner = new Runner(Env)
+    const env = new Env()
+    env.set('REPORTER', function () {})
+    this.runner = new Runner(env)
   })
 
   test('add a new suite to the runner', (assert) => {
@@ -95,6 +87,31 @@ test.group('Runner', (group) => {
 
     await this.runner.run()
     assert.deepEqual(called, ['before', 'after'])
+  })
+
+  test('run runner after hook even when test fails', async (assert) => {
+    assert.plan(2)
+    const called = []
+
+    this.runner.before(function () {
+      called.push('before')
+    })
+
+    this.runner.after(function () {
+      called.push('after')
+    })
+
+    const suite = this.runner.suite('sample')
+    suite.test('failing', () => {
+      throw new Error('Ohh bad')
+    })
+
+    try {
+      await this.runner.run()
+    } catch (error) {
+      assert.equal(error[0].error.message, 'Ohh bad')
+      assert.deepEqual(called, ['before', 'after'])
+    }
   })
 
   test('run suite traits before running any tests', async (assert) => {
@@ -174,7 +191,7 @@ test.group('Runner', (group) => {
     assert.deepEqual(called, ['foo', 'bar', 'bar'])
   })
 
-  test('context should be mutated for suite using traits', async (assert) => {
+  test('have isolote context for each suite', async (assert) => {
     const suite = this.runner.suite('sample')
     const suite1 = this.runner.suite('sample1')
     const called = []
@@ -196,5 +213,31 @@ test.group('Runner', (group) => {
 
     await this.runner.run()
     assert.deepEqual(called, ['foo', 'bar', undefined])
+  })
+
+  test('pass ioc container reference to the trait', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const called = []
+
+    class Foo {
+      handle ({ Context }) {
+        Context.getter('foo', function () {
+          return 'bar'
+        })
+      }
+    }
+
+    ioc.bind('Foo', function () {
+      return new Foo()
+    })
+
+    suite.trait('Foo')
+
+    suite.test('test', function (ctx) {
+      called.push(ctx.foo)
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['bar'])
   })
 })

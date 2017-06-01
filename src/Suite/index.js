@@ -15,9 +15,18 @@ const Context = require('../Context')
 const props = require('../../lib/props')
 
 /**
- * The test suite is a group of tests under one file. A
- * suite let users define the requirements and behavior
- * of tests.
+ * @module Adonis
+ * @submodule vow
+ */
+
+/**
+ * The test suite is a group of tests under one file. Suite
+ * let you define behavior and requirements of all the
+ * tests under one file.
+ *
+ * **Namespace**: `Test/Suite` <br />
+ * **Singleton**: No <br />
+ * **Alias**: None
  *
  * @class Suite
  * @constructor
@@ -45,22 +54,32 @@ class Suite {
 
     /**
      * Suite context class to be used for adding getters
-     * or macros to the context. A new instance of each
-     * context is passed to tests.
+     * or macros to the context. A new instance of
+     * context is passed to individual tests.
      *
      * @attribute Context
      *
      * @type {Context}
      */
     this.Context = Context()
+
+    /**
+     * The timeout to be added to all the test
+     * under a suite.
+     *
+     * @private
+     */
     this._explicitTimeout = null
   }
 
   /**
    * Returns a boolean indicating whether test should
    * be executed or not, based upon the whether a
-   * grep statmeent is in place and test title
-   * falls in the grep statement.
+   * grep statement is in place and test title
+   * contains the grep words.
+   *
+   * It simply makes use of `string.includes` method
+   * to check if a test title passes the grep term.
    *
    * @method _passesGrep
    *
@@ -78,12 +97,12 @@ class Suite {
   }
 
   /**
-   * Add a new test to the group
+   * Add a new test to the suite.
    *
    * @method _addTest
    *
-   * @param  {String}   title
-   * @param  {Function} callback
+   * @param  {String}    title
+   * @param  {Function}  callback
    * @param  {Boolean}   skip
    * @param  {Boolean}   regression
    *
@@ -93,6 +112,11 @@ class Suite {
    */
   _addTest (title, callback, skip, regression) {
     const test = new Test(title, callback, props, skip, regression)
+
+    /**
+     * Passing context as the first argument to the
+     * test over assert
+     */
     test.resolveArg((assert) => {
       const ctx = new this.Context()
       ctx.assert = assert
@@ -128,12 +152,12 @@ class Suite {
    * @return {Boolean}
    */
   hasTrait (name) {
-    return this._traits.find((trait) => trait.action === name)
+    return !!this.traits.find((trait) => trait.action === name)
   }
 
   /**
    * Hooks to be called before each test inside
-   * the suite
+   * the suite.
    *
    * @method beforeEach
    *
@@ -251,7 +275,7 @@ class Suite {
    * A trait can be a `plain function`, `a class`, or
    * reference to `ioc container binding`.
    *
-   * Class and Ioc container binding should have a handle
+   * Class and Ioc container binding should have a **handle**
    * method on it.
    *
    * @method trait
@@ -263,7 +287,7 @@ class Suite {
    */
   trait (action, options = {}) {
     if (['string', 'function'].indexOf(typeof (action)) <= -1) {
-      throw new Error('suite.trait only accepts a function, class or reference to ioc container namespace')
+      throw new Error('suite.trait only accepts a function or reference to ioc container namespace')
     }
     this.traits.push({ action, options })
   }

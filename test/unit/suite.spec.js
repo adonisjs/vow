@@ -10,7 +10,8 @@
 */
 
 const test = require('japa')
-const Suite = require('../src/Suite')
+const Suite = require('../../src/Suite')
+const props = require('../../lib/props')
 
 test.group('Suite', () => {
   test('add a new test to the suite', (assert) => {
@@ -120,15 +121,34 @@ test.group('Suite', () => {
     assert.deepEqual(suite.traits[0].action, Foo)
   })
 
+  test('return true when a trait exists', (assert) => {
+    const suite = new Suite('foo')
+    suite.trait('Foo')
+    assert.isTrue(suite.hasTrait('Foo'))
+  })
+
+  test('return false when a trait does not exists', (assert) => {
+    const suite = new Suite('foo')
+    assert.isFalse(suite.hasTrait('Foo'))
+  })
+
   test('throw exception when trait is not a function, class or string', (assert) => {
     const suite = new Suite('foo')
     const fn = () => suite.trait({})
-    assert.throw(fn, 'suite.trait only accepts a function, class or reference to ioc container namespace')
+    assert.throw(fn, 'suite.trait only accepts a function or reference to ioc container namespace')
   })
 
   test('define trait options', (assert) => {
     const suite = new Suite('foo')
     suite.trait('foo', { hook: 'beforeEach' })
     assert.deepEqual(suite.traits[0].options, { hook: 'beforeEach' })
+  })
+
+  test('do not add test to the stack when there is a grep statement in place', (assert) => {
+    props.grep = 'bar'
+    const suite = new Suite('foo')
+    suite.test('i am just foo', function () {})
+    assert.lengthOf(suite.group._tests, 0)
+    props.grep = null
   })
 })
