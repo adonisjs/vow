@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const { Env } = require('adonis-sink')
+const { Env } = require('@adonisjs/sink')
 const http = require('http')
 const nodeRes = require('node-res')
 const ApiClient = require('../../src/ApiClient')

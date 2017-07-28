@@ -10,8 +10,8 @@
 */
 
 const test = require('japa')
-const { setupResolver, Env } = require('adonis-sink')
-const { ioc } = require('adonis-fold')
+const { setupResolver, Env } = require('@adonisjs/sink')
+const { ioc } = require('@adonisjs/fold')
 const Runner = require('../../src/Runner')
 
 test.group('Runner', (group) => {

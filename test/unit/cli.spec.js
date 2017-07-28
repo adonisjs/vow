@@ -12,7 +12,7 @@
 const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
-const { Env, Helpers } = require('adonis-sink')
+const { Env, Helpers } = require('@adonisjs/sink')
 const Cli = require('../../src/Cli')
 
 test.group('Cli', (group) => {
