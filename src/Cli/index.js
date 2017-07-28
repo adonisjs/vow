@@ -51,36 +51,6 @@ class Cli {
   }
 
   /**
-   * Returns an array of test files with their absolute
-   * path. These files should be loaded directly and
-   * then tests can be executed
-   *
-   * @method _getTestFiles
-   *
-   * @return {Array}
-   *
-   * @private
-   */
-  async _getTestFiles () {
-    const includes = [this._unitTests, this._functionalTests]
-    const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
-
-    const files = await globby(this._getGlob(includes, excludes), {
-      realpath: true
-    })
-
-    /**
-     * If there is no filter callback, all files are returned
-     * Otherwise user is given a chance to filter test files.
-     */
-    if (typeof (this._filterCallback) !== 'function') {
-      return files
-    }
-
-    return files.filter(this._filterCallback)
-  }
-
-  /**
    * Define a glob pattern to be used for loading
    * unit tests
    *
@@ -123,13 +93,40 @@ class Cli {
   filter (patternOrCallback) {
     if (typeof (patternOrCallback) === 'function') {
       this._filterCallback = patternOrCallback
-      return
     } else if (typeof (patternOrCallback) === 'string' || patternOrCallback instanceof Array === true) {
       this._ignoreTests = patternOrCallback
     } else {
       throw new Error('cli.filter accepts an array/string of globs or a callback function')
     }
     return this
+  }
+
+  /**
+   * Returns an array of test files with their absolute
+   * path. These files should be loaded directly and
+   * then tests can be executed
+   *
+   * @method getTestFiles
+   *
+   * @return {Array}
+   */
+  async getTestFiles () {
+    const includes = [this._unitTests, this._functionalTests].filter((test) => !!test)
+    const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
+
+    const files = await globby(this._getGlob(includes, excludes), {
+      realpath: true
+    })
+
+    /**
+     * If there is no filter callback, all files are returned
+     * Otherwise user is given a chance to filter test files.
+     */
+    if (typeof (this._filterCallback) !== 'function') {
+      return files
+    }
+
+    return files.filter(this._filterCallback)
   }
 }
 

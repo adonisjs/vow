@@ -215,7 +215,7 @@ test.group('Runner', (group) => {
     assert.deepEqual(called, ['foo', 'bar', undefined])
   })
 
-  test('pass ioc container reference to the trait', async (assert) => {
+  test('set ioc container namespace as a trait', async (assert) => {
     const suite = this.runner.suite('sample')
     const called = []
 

@@ -24,9 +24,7 @@ const props = require('../../lib/props')
  * let you define behavior and requirements of all the
  * tests under one file.
  *
- * **Namespace**: `Test/Suite` <br />
- * **Singleton**: No <br />
- * **Alias**: None
+ * @namespace Test/Suite
  *
  * @class Suite
  * @constructor

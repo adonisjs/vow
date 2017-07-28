@@ -11,7 +11,7 @@
 
 const { Runner, reporters } = require('japa/api')
 const pSeries = require('p-series')
-const { resolver } = require('adonis-fold')
+const { resolver } = require('@adonisjs/fold')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
@@ -202,6 +202,12 @@ class TestRunner {
      * Execute tests
      */
     try {
+      /**
+       * All traits are executed even before suite is
+       * executed. So if someone is trying to perform
+       * some global changes, they should use hooks
+       * over using the trait callback
+       */
       this._suites.forEach((suite) => {
         this._runTraits(suite)
         groups.push(suite.group)
