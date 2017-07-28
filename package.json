@@ -33,7 +33,7 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
-    "glob": "^7.1.2",
+    "globby": "^6.1.0",
     "japa": "git+https://github.com/thetutlage/japa.git#develop",
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
