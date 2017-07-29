@@ -12,6 +12,14 @@
 const Request = require('./Request')
 const apiMethods = ['get', 'post', 'put', 'delete', 'patch']
 
+/**
+ * The api client is a facade over @ref('ApiRequest').
+ *
+ * @class ApiClient
+ * @constructor
+ *
+ * @namespace Test/ApiClient
+ */
 class ApiClient {
   constructor (Env, assert) {
     this._baseUrl = Env.get('TEST_SERVER_URL')

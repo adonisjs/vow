@@ -9,13 +9,14 @@
  * file that was distributed with this source code.
 */
 
-const { Runner, reporters } = require('japa/api')
+const { Runner, reporters, Assertion } = require('japa/api')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:vow')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
+Assertion.use(require('chai-subset'))
 
 /**
  * Test runner is used to run the test using

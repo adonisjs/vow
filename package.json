@@ -33,11 +33,13 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
+    "chai-subset": "^1.5.0",
     "debug": "^2.6.8",
     "globby": "^6.1.0",
     "japa": "git+https://github.com/thetutlage/japa.git#develop",
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
+    "node-cookie": "^2.0.0",
     "p-series": "^1.0.0",
     "superagent": "^3.5.2"
   },

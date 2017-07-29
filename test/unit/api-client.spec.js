@@ -10,10 +10,14 @@
 */
 
 const test = require('japa')
+const { Assertion } = require('japa/api')
 const { Env } = require('@adonisjs/sink')
 const http = require('http')
 const nodeRes = require('node-res')
+const nodeCookie = require('node-cookie')
 const ApiClient = require('../../src/ApiClient')
+Assertion.use(require('chai-subset'))
+process.env.APP_KEY = '16charlongsecret'
 
 test.group('Api Client', (group) => {
   group.beforeEach(() => {
@@ -144,5 +148,173 @@ test.group('Api Client', (group) => {
     const client = new ApiClient(env, assert)
     const response = await client.get('/')
     response.assertRedirect('/home')
+  })
+
+  test('set proper message when 404 is received', async (assert) => {
+    assert.plan(2)
+    this.server.on('request', (req, res) => {
+      nodeRes.status(res, '404')
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    try {
+      response.assertStatus(200)
+    } catch ({ message }) {
+      assert.equal(message, 'Make sure to define the route: expected 404 to equal 200')
+    }
+  })
+
+  test('assert subset json', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, { username: 'virk', id: 1 })
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    response.assertJSONSubset({ username: 'virk' })
+  })
+
+  test('assert subset should fail if expected key is missing', async (assert) => {
+    assert.plan(2)
+
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, { username: 'virk', id: 1 })
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    try {
+      response.assertJSONSubset({ username: 'virk', age: 22 })
+    } catch ({ message }) {
+      assert.equal(message, 'expected { username: \'virk\', id: 1 } to contain subset { username: \'virk\', age: 22 }')
+    }
+  })
+
+  test('get response cookies', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeCookie.create(res, 'cart-total', 10, {}, process.env.APP_KEY, true)
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    assert.deepEqual(response.cookies, { 'cart-total': '10' })
+  })
+
+  test('get plain cookies', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeCookie.create(res, 'cart-total', 10)
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    assert.deepEqual(response.plainCookies, { 'cart-total': '10' })
+  })
+
+  test('do not return expired cookies', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeCookie.create(res, 'cart-total', 10)
+      nodeCookie.clear(res, 'cart-total')
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    assert.deepEqual(response.plainCookies, { 'cart-total': '10' })
+  })
+
+  test('assert cookie', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeCookie.create(res, 'cart-total', 10, {}, process.env.APP_KEY, true)
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    response.assertCookie('cart-total', 10)
+  })
+
+  test('assert plain cookie', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeCookie.create(res, 'cart-total', 10, {})
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    response.assertPlainCookie('cart-total', 10)
+  })
+
+  test('assert header', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.header(res, 'Content-type', 'application/json')
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/')
+    response.assertHeader('Content-type', 'application/json')
+  })
+
+  test('set request headers', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, req.headers['content-type'])
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/').set('Content-type', 'application/json')
+    response.assertText('application/json')
+  })
+
+  test('set request cookies', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, nodeCookie.parse(req, process.env.APP_KEY, true))
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/').setCookie('total', 20)
+    response.assertBody({ total: '20' })
+  })
+
+  test('set json value on cookies', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, nodeCookie.parse(req, process.env.APP_KEY, true))
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/').setCookie('user', { username: 'virk' })
+    response.assertBody({ user: { username: 'virk' } })
+  })
+
+  test('set plain cookie', async (assert) => {
+    this.server.on('request', (req, res) => {
+      nodeRes.send(req, res, nodeCookie.parse(req))
+      res.end()
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'http://localhost:4000' })
+    const client = new ApiClient(env, assert)
+    const response = await client.get('/').setPlainCookie('user', { username: 'virk' })
+    response.assertBody({ user: { username: 'virk' } })
   })
 })
