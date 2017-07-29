@@ -1,5 +1,5 @@
 {
-  "name": "adonis-vow",
+  "name": "@adonisjs/vow",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
