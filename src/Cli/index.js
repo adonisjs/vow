@@ -11,6 +11,7 @@
 
 const path = require('path')
 const globby = require('globby')
+const debug = require('debug')('adonis:vow')
 
 /**
  * The Cli class is used to load the test files
@@ -61,6 +62,7 @@ class Cli {
    * @chainable
    */
   unit (glob) {
+    debug('setting unit tests glob as %s', glob)
     this._unitTests = glob
     return this
   }
@@ -76,6 +78,7 @@ class Cli {
    * @chainable
    */
   functional (glob) {
+    debug('setting functional tests glob as %s', glob)
     this._functionalTests = glob
     return this
   }
@@ -126,7 +129,9 @@ class Cli {
       return files
     }
 
-    return files.filter(this._filterCallback)
+    const testFiles = files.filter(this._filterCallback)
+    debug('test files %j', testFiles)
+    return testFiles
   }
 }
 

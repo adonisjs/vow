@@ -12,6 +12,7 @@
 const { Runner, reporters } = require('japa/api')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
+const debug = require('debug')('adonis:vow')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
@@ -57,6 +58,7 @@ class TestRunner {
    * @private
    */
   _runTraits (suite) {
+    debug('running %d trait(s) for %s suite', suite.traits.length, suite.group.title)
     suite.traits.forEach((trait) => {
       if (typeof (trait.action) === 'function') {
         return trait.action(suite, trait.options)
@@ -80,6 +82,7 @@ class TestRunner {
     props.grep = null
     props.timeout = 2000
     props.bail = false
+    this.executedStack = false
     this._stack = {
       before: [],
       after: []
@@ -98,6 +101,7 @@ class TestRunner {
    * @return {Suite}
    */
   suite (title) {
+    debug('added new test suite %s', title)
     const suite = new Suite(title)
     this._suites.push(suite)
     return suite
@@ -113,6 +117,7 @@ class TestRunner {
    * @return {void}
    */
   timeout (timeout) {
+    debug('setting global timeout as %s', timeout)
     props.timeout = timeout
   }
 
@@ -126,6 +131,7 @@ class TestRunner {
    * @return {void}
    */
   bail (state) {
+    debug('toggling bail status to %s', state)
     props.bail = state
   }
 
@@ -139,6 +145,7 @@ class TestRunner {
    * @chainable
    */
   grep (term) {
+    debug('setting runner grep term as %s', term)
     props.grep = term
     return this
   }
@@ -212,6 +219,8 @@ class TestRunner {
         this._runTraits(suite)
         groups.push(suite.group)
       })
+      this.executedStack = true
+      debug('executing tests')
       await new Runner(groups, this._reporter, props).run()
     } catch (error) {
       testsError = error

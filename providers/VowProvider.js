@@ -40,9 +40,8 @@ class VowProvider extends ServiceProvider {
    */
   _registerCli () {
     this.app.singleton('Test/Cli', (app) => {
-      const Env = app.use('Adonis/Src/Env')
       const Cli = require('../src/Cli')
-      return new Cli(Env)
+      return new Cli(app.use('Adonis/Src/Env'), app.use('Adonis/Src/Helpers'))
     })
   }
 
@@ -101,10 +100,7 @@ class VowProvider extends ServiceProvider {
    * @private
    */
   _registerTestCommand () {
-    this.app.bind('Adonis/Commands/Test', (app) => {
-      const RunTests = require('../commands/RunTests')
-      return new RunTests(app.use('Test/Runner'), app.use('Test/Cli'))
-    })
+    this.app.bind('Adonis/Commands/Test', (app) => require('../commands/RunTests'))
   }
 
   /**
