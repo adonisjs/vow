@@ -13,10 +13,11 @@ const _ = require('lodash')
 const { Command } = require('@adonisjs/ace')
 
 class RunTests extends Command {
-  constructor (runner, cli) {
+  constructor (runner, cli, server) {
     super()
     this.runner = runner
     this.cli = cli
+    this.server = server
   }
 
   /**
@@ -132,13 +133,41 @@ class RunTests extends Command {
     }
 
     try {
+      /**
+       * Starting HTTP server
+       */
+      this.server.listen()
+
+      /**
+       * Setting test url when its not defined
+       */
+      if (!process.env.TEST_SERVER_URL) {
+        process.env.TEST_SERVER_URL = `http://${process.env.HOST}:${process.env.PORT}`
+      }
+
+      /**
+       * Requiring all test files.
+       */
       _.each(testFiles, (file) => require(file))
+
+      /**
+       * Running the test runner
+       */
       await this.runner.run()
     } catch (error) {
+      /**
+       * If log the error when test suite was not executed.
+       * Otherwise test reporter will report the error
+       */
       if (!this.runner.executedStack) {
         console.error(error)
       }
     }
+
+    /**
+     * Closing HTTP server
+     */
+    this.server.getInstance().close()
   }
 }
 
