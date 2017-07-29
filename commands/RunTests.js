@@ -56,7 +56,7 @@ class RunTests extends Command {
    * @return {Array}
    */
   static get inject () {
-    return ['Test/Runner', 'Test/Cli']
+    return ['Test/Runner', 'Test/Cli', 'Adonis/Src/Server']
   }
 
   /**
