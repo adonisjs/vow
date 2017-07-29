@@ -24,6 +24,22 @@ test.group('Api Client', (group) => {
     this.server.close()
   })
 
+  test('throw error when unable to connect', async (assert) => {
+    assert.plan(1)
+    this.server.on('request', (req, res) => {
+      res.end('yayy')
+    })
+
+    const env = new Env({ TEST_SERVER_URL: 'null:null' })
+    const client = new ApiClient(env, assert)
+    try {
+      const response = await client.get('/')
+      console.log(response)
+    } catch ({ message }) {
+      assert.equal(message, 'getaddrinfo ENOTFOUND null null:80')
+    }
+  })
+
   test('initiate client with new request', async (assert) => {
     this.server.on('request', (req, res) => {
       res.end('yayy')

@@ -36,13 +36,15 @@ class Request {
 
   then (userResolve, userReject) {
     if (!this._fullfilledPromise) {
-      this._fullfilledPromise = new Promise((resolve) => {
+      this._fullfilledPromise = new Promise((resolve, reject) => {
         this.agent.end((error, response) => {
-          if (error) {
-            resolve(new Response(error, this._assert))
-            return
+          if (error && error.response) {
+            resolve(new Response(error.response, true, this._assert))
+          } else if (error) {
+            reject(error)
+          } else {
+            resolve(new Response(response, false, this._assert))
           }
-          resolve(new Response(response, this._assert))
         })
       })
     }

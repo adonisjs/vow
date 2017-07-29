@@ -12,10 +12,10 @@
 const urlModule = require('url')
 
 class Response {
-  constructor (resOrError, assert) {
+  constructor (res, isError, assert) {
     this._assert = assert
-    this._isError = resOrError.name === 'Error'
-    this._res = this._isError ? resOrError.response : resOrError
+    this._isError = isError
+    this._res = res
   }
 
   get status () {
