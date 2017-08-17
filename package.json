@@ -21,25 +21,25 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/ace": "^4.0.3",
-    "@adonisjs/fold": "^4.0.0",
-    "@adonisjs/sink": "^1.0.9",
+    "@adonisjs/ace": "^4.0.4",
+    "@adonisjs/fold": "^4.0.2",
+    "@adonisjs/sink": "^1.0.12",
     "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
-    "fs-extra": "^4.0.0",
+    "fs-extra": "^4.0.1",
     "japa-cli": "^1.0.1",
     "node-res": "^4.0.0",
-    "nyc": "^11.0.3",
-    "standard": "^10.0.2"
+    "nyc": "^11.1.0",
+    "standard": "^10.0.3"
   },
   "dependencies": {
     "chai-subset": "^1.5.0",
-    "debug": "^2.6.8",
+    "debug": "^3.0.0",
     "globby": "^6.1.0",
-    "japa": "git+https://github.com/thetutlage/japa.git#develop",
+    "japa": "^1.0.4",
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
-    "node-cookie": "^2.0.0",
+    "node-cookie": "^2.0.2",
     "p-series": "^1.0.0",
     "superagent": "^3.5.2"
   },
@@ -47,5 +47,11 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "exclude": [
+      "providers",
+      "bin"
+    ]
   }
 }
