@@ -37,4 +37,9 @@ test.group('Cookie Parser', () => {
     const hash = cookieParser.filterExpired([cookieParser.parse('foo=bar; Expires=Thu, 20 Jan 2020 00:00:00')])
     assert.deepEqual(hash, [{ key: 'foo', value: 'bar', meta: { expires: 'Thu, 20 Jan 2020 00:00:00' } }])
   })
+
+  test('return cookies that do not have expiry data', (assert) => {
+    const hash = cookieParser.filterExpired([cookieParser.parse('foo=bar;')])
+    assert.deepEqual(hash, [{ key: 'foo', value: 'bar', meta: {} }])
+  })
 })
