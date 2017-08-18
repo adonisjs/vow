@@ -11,7 +11,7 @@
 
 const path = require('path')
 const globby = require('globby')
-const debug = require('debug')('adonis:vow')
+const debug = require('debug')('adonis:vow:cli')
 
 /**
  * The Cli class is used to load the test files

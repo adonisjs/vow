@@ -12,7 +12,7 @@
 const { Runner, reporters, Assertion } = require('japa/api')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
-const debug = require('debug')('adonis:vow')
+const debug = require('debug')('adonis:vow:runner')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
