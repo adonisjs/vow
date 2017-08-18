@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
 */
 
+const path = require('path')
 const _ = require('lodash')
 const { Command } = require('@adonisjs/ace')
 
 class RunTests extends Command {
-  constructor (runner, cli, server) {
+  constructor (runner, cli) {
     super()
     this.runner = runner
     this.cli = cli
-    this.server = server
   }
 
   /**
@@ -30,10 +30,10 @@ class RunTests extends Command {
   static get signature () {
     return `test
     { type?=all: Define test types, needs to be unit or functional }
-    { --bail: Stop running tests on first failure }
-    { --timeout: Define a global timeout for all the tests }
-    { --files=@value: Pick only specific files. File names are seperated by comma }
-    { --grep=@value: Grep on tests title to run only selected tests }
+    { -b, --bail: Stop running tests on first failure }
+    { t-, --timeout: Define a global timeout for all the tests }
+    { -f, --files=@value: Pick only specific files. File names are seperated by comma }
+    { -g, --grep=@value: Grep on tests title to run only selected tests }
     { --glob=@value: Define a custom glob to pick test files }`
   }
 
@@ -56,7 +56,29 @@ class RunTests extends Command {
    * @return {Array}
    */
   static get inject () {
-    return ['Test/Runner', 'Test/Cli', 'Adonis/Src/Server']
+    return ['Test/Runner', 'Test/Cli']
+  }
+
+  /**
+   * Require the vow file from the project root
+   * if there
+   *
+   * @method _requireVowFile
+   *
+   * @param  {String}        projectRoot
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _requireVowFile (projectRoot) {
+    try {
+      require(path.join(projectRoot, 'vowfile'))(this.cli, this.runner)
+    } catch (error) {
+      if (error.code !== 'MODULE_NOT_FOUND') {
+        throw error
+      }
+    }
   }
 
   /**
@@ -75,6 +97,9 @@ class RunTests extends Command {
    * @return {void}
    */
   async handle ({ type }, { bail, timeout, files, grep, glob }) {
+    const projectRoot = this.cli.projectRoot
+    this._requireVowFile(projectRoot)
+
     this.runner.bail(bail || false)
 
     /**
@@ -134,11 +159,6 @@ class RunTests extends Command {
 
     try {
       /**
-       * Starting HTTP server
-       */
-      this.server.listen()
-
-      /**
        * Setting test url when its not defined
        */
       if (!process.env.TEST_SERVER_URL) {
@@ -163,11 +183,6 @@ class RunTests extends Command {
         console.error(error)
       }
     }
-
-    /**
-     * Closing HTTP server
-     */
-    this.server.getInstance().close()
   }
 }
 

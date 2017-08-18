@@ -25,7 +25,7 @@ const debug = require('debug')('adonis:vow')
  */
 class Cli {
   constructor (Env, Helpers) {
-    this._projectRoot = Helpers.appRoot()
+    this.projectRoot = Helpers.appRoot()
     this._unitTests = Env.get('UNIT_TESTS', 'test/unit/*.spec.js')
     this._functionalTests = Env.get('FUNCTIONAL_TESTS', 'test/functional/*.spec.js')
     this._ignoreTests = Env.get('IGNORE_TESTS', [])
@@ -46,8 +46,8 @@ class Cli {
    * @private
    */
   _getGlob (includes, excludes = []) {
-    const absIncludes = includes.map((glob) => path.join(this._projectRoot, glob))
-    const absExcludes = excludes.map((glob) => `!${path.join(this._projectRoot, glob)}`)
+    const absIncludes = includes.map((glob) => path.join(this.projectRoot, glob))
+    const absExcludes = excludes.map((glob) => `!${path.join(this.projectRoot, glob)}`)
     return absIncludes.concat(absExcludes)
   }
 
