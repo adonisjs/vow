@@ -86,7 +86,7 @@ class RunTests extends Command {
 
     /**
      * If user has asked to run only unit tests,
-     * test functional tests glob to null
+     * set functional tests glob to null
      */
     if (type === 'unit' || (typeof (glob) === 'string' && glob)) {
       this.cli.functional(glob)
