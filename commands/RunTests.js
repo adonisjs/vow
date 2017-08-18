@@ -12,12 +12,14 @@
 const path = require('path')
 const _ = require('lodash')
 const { Command } = require('@adonisjs/ace')
+const debug = require('debug')('adonis:vow:command')
 
 class RunTests extends Command {
-  constructor (runner, cli) {
+  constructor (runner, cli, env) {
     super()
     this.runner = runner
     this.cli = cli
+    this.env = env
   }
 
   /**
@@ -56,7 +58,7 @@ class RunTests extends Command {
    * @return {Array}
    */
   static get inject () {
-    return ['Test/Runner', 'Test/Cli']
+    return ['Test/Runner', 'Test/Cli', 'Adonis/Src/Env']
   }
 
   /**
@@ -74,10 +76,34 @@ class RunTests extends Command {
   _requireVowFile (projectRoot) {
     try {
       require(path.join(projectRoot, 'vowfile'))(this.cli, this.runner)
+      debug('loaded vowfile.js')
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
         throw error
       }
+    }
+  }
+
+  /**
+   * Loads the `.env.test` file from the application root
+   * directory. If file doesn't exists it will ignore
+   * it.
+   *
+   * @method _requireTestEnvFile
+   * @async
+   *
+   * @param  {String}            projectRoot
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  async _requireTestEnvFile (projectRoot) {
+    const testEnvFile = path.join(projectRoot, '.env.test')
+    const exists = await this.exists(testEnvFile)
+    if (exists) {
+      debug('loading .env.test file to merge the env variables')
+      this.env.load(testEnvFile)
     }
   }
 
@@ -98,6 +124,7 @@ class RunTests extends Command {
    */
   async handle ({ type }, { bail, timeout, files, grep, glob }) {
     const projectRoot = this.cli.projectRoot
+    await this._requireTestEnvFile(projectRoot)
     this._requireVowFile(projectRoot)
 
     this.runner.bail(bail || false)
@@ -106,6 +133,7 @@ class RunTests extends Command {
      * If grep statement is defined, use it
      */
     if (grep) {
+      debug('grep term %s', grep)
       this.runner.grep(grep)
     }
 
@@ -129,8 +157,10 @@ class RunTests extends Command {
      * If there is a global timeout set it on
      * runner
      */
-    if (timeout && Number(timeout)) {
-      this.runner.timeout(Number(timeout))
+    timeout = Number(timeout)
+    if (timeout && !isNaN(timeout)) {
+      debug('global timeout %d', timeout)
+      this.runner.timeout(timeout)
     }
 
     /**
@@ -155,6 +185,7 @@ class RunTests extends Command {
           return file.endsWith(selectedFile.trim())
         })
       })
+      debug('post --files filter %j', testFiles)
     }
 
     try {
@@ -164,6 +195,7 @@ class RunTests extends Command {
       if (!process.env.TEST_SERVER_URL) {
         process.env.TEST_SERVER_URL = `http://${process.env.HOST}:${process.env.PORT}`
       }
+      debug('running test server on %s', process.env.TEST_SERVER_URL)
 
       /**
        * Requiring all test files.
