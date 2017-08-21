@@ -11,27 +11,37 @@
 
 const path = require('path')
 
-module.exports = async (cli) => {
+async function copyVowFile (cli, appRoot) {
   try {
-    const appRoot = cli.helpers.appRoot()
-    /**
-     * Copy vow file
-     */
     await cli.copy(path.join(__dirname, 'templates/vowfile.js'), path.join(appRoot, 'vowfile.js'))
     cli.command.completed('create', 'vowfile.js')
+  } catch (error) {
+    // ignore error
+  }
+}
 
-    /**
-     * Copy example test case
-     */
+async function copyExampleTestCase (cli, appRoot) {
+  try {
     await cli.copy(path.join(__dirname, 'templates/unitTest.js'), path.join(appRoot, 'test/unit/example.spec.js'))
     cli.command.completed('create', 'test/unit/example.spec.js')
+  } catch (error) {
+    // ignore error
+  }
+}
 
-    /**
-     * Copy .env.testing file
-     */
+async function copyEnvFile (cli, appRoot) {
+  try {
     await cli.copy(path.join(__dirname, 'templates/.env.testing'), path.join(appRoot, '.env.testing'))
     cli.command.completed('create', '.env.testing')
   } catch (error) {
-    // ignore the error
+    // ignore error
   }
+}
+
+module.exports = async (cli) => {
+  const appRoot = cli.helpers.appRoot()
+
+  await copyVowFile(cli, appRoot)
+  await copyExampleTestCase(cli, appRoot)
+  await copyEnvFile(cli, appRoot)
 }
