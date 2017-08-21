@@ -239,6 +239,21 @@ class TestRunner {
       throw testsError
     }
   }
+
+  /**
+   * Set a custom event emitter to listen for test
+   * status
+   *
+   * @method emitter
+   *
+   * @param  {Object} emitter
+   *
+   * @chainable
+   */
+  emitter (emitter) {
+    props.emitter = emitter
+    return this
+  }
 }
 
 module.exports = TestRunner

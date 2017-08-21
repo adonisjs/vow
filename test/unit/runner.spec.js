@@ -13,6 +13,8 @@ const test = require('japa')
 const { setupResolver, Env } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
 const Runner = require('../../src/Runner')
+const props = require('../../lib/props')
+const EventEmitter = require('events').EventEmitter
 
 test.group('Runner', (group) => {
   group.before(() => {
@@ -239,5 +241,37 @@ test.group('Runner', (group) => {
 
     await this.runner.run()
     assert.deepEqual(called, ['bar'])
+  })
+
+  test('bind trait as a function', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const called = []
+
+    ioc.bind('Foo', function () {
+      return function ({ Context }) {
+        Context.getter('foo', function () {
+          return 'bar'
+        })
+      }
+    })
+
+    suite.trait('Foo')
+
+    suite.test('test', function (ctx) {
+      called.push(ctx.foo)
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['bar'])
+  })
+
+  test('set bail status on runner', async (assert) => {
+    this.runner.bail(true)
+    assert.isTrue(props.bail)
+  })
+
+  test('set a different test emitter', async (assert) => {
+    const emitter = new EventEmitter()
+    this.runner.emitter(emitter)
   })
 })

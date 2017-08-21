@@ -50,7 +50,8 @@
   "nyc": {
     "exclude": [
       "providers",
-      "bin"
+      "bin",
+      "test"
     ]
   }
 }
