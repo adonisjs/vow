@@ -25,6 +25,12 @@ module.exports = async (cli) => {
      */
     await cli.copy(path.join(__dirname, 'templates/unitTest.js'), path.join(appRoot, 'test/unit/example.spec.js'))
     cli.command.completed('create', 'test/unit/example.spec.js')
+
+    /**
+     * Copy .env.testing file
+     */
+    await cli.copy(path.join(__dirname, 'templates/.env.testing'), path.join(appRoot, '.env.testing'))
+    cli.command.completed('create', '.env.testing')
   } catch (error) {
     // ignore the error
   }

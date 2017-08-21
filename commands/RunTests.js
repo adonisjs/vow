@@ -99,10 +99,10 @@ class RunTests extends Command {
    * @private
    */
   async _requireTestEnvFile (projectRoot) {
-    const testEnvFile = path.join(projectRoot, '.env.test')
+    const testEnvFile = path.join(projectRoot, '.env.testing')
     const exists = await this.exists(testEnvFile)
     if (exists) {
-      debug('loading .env.test file to merge the env variables')
+      debug('loading .env.testing file to merge the env variables')
       this.env.load(testEnvFile)
     }
   }
