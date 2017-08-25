@@ -5,7 +5,7 @@ The provider must be registered as an `aceProvider`, since there is no point in 
 
 ```js
 const aceProviders = [
-  '@adonisjs/providers/VowProvider'
+  '@adonisjs/vow/providers/VowProvider'
 ]
 ```
 

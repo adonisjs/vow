@@ -1,3 +1,13 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/adonisjs/adonis-vow/compare/v1.0.0...v1.0.1) (2017-08-25)
+
+
+### Bug Fixes
+
+* **command:** fix typo for pathExists method ([ceee8de](https://github.com/adonisjs/adonis-vow/commit/ceee8de))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2017-08-25)
 
