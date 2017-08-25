@@ -1,5 +1,5 @@
 {
-  "name": "adonis-vow",
+  "name": "@adonisjs/vow",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,9 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
-    "test:local": "DEBUG=adonis:vow node --harmony-async-await ./node_modules/.bin/japa",
-    "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "set DEBUG=adonis:vow && node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "standard": {
@@ -21,29 +21,37 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "adonis-ace": "git+https://github.com/adonisjs/ace.git#dawn",
-    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
-    "adonis-sink": "^1.0.3",
+    "@adonisjs/ace": "^4.0.4",
+    "@adonisjs/fold": "^4.0.2",
+    "@adonisjs/sink": "^1.0.12",
     "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
-    "fs-extra": "^3.0.1",
-    "japa": "git+https://github.com/thetutlage/japa.git#develop",
+    "fs-extra": "^4.0.1",
     "japa-cli": "^1.0.1",
-    "node-res": "^3.0.1",
-    "nyc": "^10.3.2",
-    "standard": "^10.0.2"
+    "node-res": "^4.0.0",
+    "nyc": "^11.1.0",
+    "standard": "^10.0.3"
   },
   "dependencies": {
-    "glob": "^7.1.2",
-    "japa": "git+https://github.com/thetutlage/japa.git#develop",
+    "chai-subset": "^1.5.0",
+    "debug": "^3.0.0",
+    "globby": "^6.1.0",
+    "japa": "^1.0.4",
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
-    "p-series": "^1.0.0",
-    "superagent": "^3.5.2"
+    "node-cookie": "^2.0.2",
+    "p-series": "^1.0.0"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "exclude": [
+      "providers",
+      "bin",
+      "test"
+    ]
   }
 }

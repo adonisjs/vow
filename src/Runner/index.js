@@ -9,12 +9,14 @@
  * file that was distributed with this source code.
 */
 
-const { Runner, reporters } = require('japa/api')
+const { Runner, reporters, Assertion } = require('japa/api')
 const pSeries = require('p-series')
-const { resolver } = require('adonis-fold')
+const { resolver } = require('@adonisjs/fold')
+const debug = require('debug')('adonis:vow:runner')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
+Assertion.use(require('chai-subset'))
 
 /**
  * Test runner is used to run the test using
@@ -57,6 +59,7 @@ class TestRunner {
    * @private
    */
   _runTraits (suite) {
+    debug('running %d trait(s) for %s suite', suite.traits.length, suite.group.title)
     suite.traits.forEach((trait) => {
       if (typeof (trait.action) === 'function') {
         return trait.action(suite, trait.options)
@@ -80,6 +83,7 @@ class TestRunner {
     props.grep = null
     props.timeout = 2000
     props.bail = false
+    this.executedStack = false
     this._stack = {
       before: [],
       after: []
@@ -98,6 +102,7 @@ class TestRunner {
    * @return {Suite}
    */
   suite (title) {
+    debug('added new test suite %s', title)
     const suite = new Suite(title)
     this._suites.push(suite)
     return suite
@@ -113,6 +118,7 @@ class TestRunner {
    * @return {void}
    */
   timeout (timeout) {
+    debug('setting global timeout as %s', timeout)
     props.timeout = timeout
   }
 
@@ -126,6 +132,7 @@ class TestRunner {
    * @return {void}
    */
   bail (state) {
+    debug('toggling bail status to %s', state)
     props.bail = state
   }
 
@@ -139,6 +146,7 @@ class TestRunner {
    * @chainable
    */
   grep (term) {
+    debug('setting runner grep term as %s', term)
     props.grep = term
     return this
   }
@@ -202,10 +210,18 @@ class TestRunner {
      * Execute tests
      */
     try {
+      /**
+       * All traits are executed even before suite is
+       * executed. So if someone is trying to perform
+       * some global changes, they should use hooks
+       * over using the trait callback
+       */
       this._suites.forEach((suite) => {
         this._runTraits(suite)
         groups.push(suite.group)
       })
+      this.executedStack = true
+      debug('executing tests')
       await new Runner(groups, this._reporter, props).run()
     } catch (error) {
       testsError = error
@@ -222,6 +238,21 @@ class TestRunner {
     if (testsError) {
       throw testsError
     }
+  }
+
+  /**
+   * Set a custom event emitter to listen for test
+   * status
+   *
+   * @method emitter
+   *
+   * @param  {Object} emitter
+   *
+   * @chainable
+   */
+  emitter (emitter) {
+    props.emitter = emitter
+    return this
   }
 }
 

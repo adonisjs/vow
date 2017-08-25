@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
 */
 
-const { registrar, ioc } = require('adonis-fold')
-const { Helpers, setupResolver, Config, Env } = require('adonis-sink')
+const { registrar, ioc } = require('@adonisjs/fold')
+const { Helpers, setupResolver, Config, Env } = require('@adonisjs/sink')
 const path = require('path')
 
 module.exports = function () {

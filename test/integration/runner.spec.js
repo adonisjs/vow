@@ -77,19 +77,4 @@ jTest.group('Runner', (group) => {
     await runner.run()
     jAssert.deepEqual(called, ['beforeEach', 'afterEach', 'beforeEach', 'afterEach'])
   })
-
-  jTest('use api client trait', async (jAssert) => {
-    jAssert.plan(1)
-
-    const { test, trait } = use('Test/Suite')('My Sample suite')
-    trait('Test/ApiClient')
-
-    const runner = use('Test/Runner')
-
-    test('2 + 2 is 4', function ({ assert, client }) {
-      jAssert.isTrue(true)
-      assert.isDefined(client)
-    })
-    await runner.run()
-  })
 })

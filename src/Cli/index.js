@@ -11,6 +11,7 @@
 
 const path = require('path')
 const globby = require('globby')
+const debug = require('debug')('adonis:vow:cli')
 
 /**
  * The Cli class is used to load the test files
@@ -24,7 +25,7 @@ const globby = require('globby')
  */
 class Cli {
   constructor (Env, Helpers) {
-    this._projectRoot = Helpers.appRoot()
+    this.projectRoot = Helpers.appRoot()
     this._unitTests = Env.get('UNIT_TESTS', 'test/unit/*.spec.js')
     this._functionalTests = Env.get('FUNCTIONAL_TESTS', 'test/functional/*.spec.js')
     this._ignoreTests = Env.get('IGNORE_TESTS', [])
@@ -45,39 +46,9 @@ class Cli {
    * @private
    */
   _getGlob (includes, excludes = []) {
-    const absIncludes = includes.map((glob) => path.join(this._projectRoot, glob))
-    const absExcludes = excludes.map((glob) => `!${path.join(this._projectRoot, glob)}`)
+    const absIncludes = includes.map((glob) => path.join(this.projectRoot, glob))
+    const absExcludes = excludes.map((glob) => `!${path.join(this.projectRoot, glob)}`)
     return absIncludes.concat(absExcludes)
-  }
-
-  /**
-   * Returns an array of test files with their absolute
-   * path. These files should be loaded directly and
-   * then tests can be executed
-   *
-   * @method _getTestFiles
-   *
-   * @return {Array}
-   *
-   * @private
-   */
-  async _getTestFiles () {
-    const includes = [this._unitTests, this._functionalTests]
-    const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
-
-    const files = await globby(this._getGlob(includes, excludes), {
-      realpath: true
-    })
-
-    /**
-     * If there is no filter callback, all files are returned
-     * Otherwise user is given a chance to filter test files.
-     */
-    if (typeof (this._filterCallback) !== 'function') {
-      return files
-    }
-
-    return files.filter(this._filterCallback)
   }
 
   /**
@@ -91,6 +62,7 @@ class Cli {
    * @chainable
    */
   unit (glob) {
+    debug('setting unit tests glob as %s', glob)
     this._unitTests = glob
     return this
   }
@@ -106,6 +78,7 @@ class Cli {
    * @chainable
    */
   functional (glob) {
+    debug('setting functional tests glob as %s', glob)
     this._functionalTests = glob
     return this
   }
@@ -123,13 +96,42 @@ class Cli {
   filter (patternOrCallback) {
     if (typeof (patternOrCallback) === 'function') {
       this._filterCallback = patternOrCallback
-      return
     } else if (typeof (patternOrCallback) === 'string' || patternOrCallback instanceof Array === true) {
       this._ignoreTests = patternOrCallback
     } else {
       throw new Error('cli.filter accepts an array/string of globs or a callback function')
     }
     return this
+  }
+
+  /**
+   * Returns an array of test files with their absolute
+   * path. These files should be loaded directly and
+   * then tests can be executed
+   *
+   * @method getTestFiles
+   *
+   * @return {Array}
+   */
+  async getTestFiles () {
+    const includes = [this._unitTests, this._functionalTests].filter((test) => !!test)
+    const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
+
+    const files = await globby(this._getGlob(includes, excludes), {
+      realpath: true
+    })
+
+    /**
+     * If there is no filter callback, all files are returned
+     * Otherwise user is given a chance to filter test files.
+     */
+    if (typeof (this._filterCallback) !== 'function') {
+      return files
+    }
+
+    const testFiles = files.filter(this._filterCallback)
+    debug('test files %j', testFiles)
+    return testFiles
   }
 }
 

@@ -12,7 +12,7 @@
 const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
-const { Env, Helpers } = require('adonis-sink')
+const { Env, Helpers } = require('@adonisjs/sink')
 const Cli = require('../../src/Cli')
 
 test.group('Cli', (group) => {
@@ -93,7 +93,7 @@ test.group('Cli', (group) => {
     await fs.ensureFile(unitTestFile)
     await fs.ensureFile(functionalTestFile)
 
-    const testsFiles = await this.cli._getTestFiles()
+    const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
   })
 
@@ -107,7 +107,7 @@ test.group('Cli', (group) => {
     await fs.ensureFile(skipTestFile)
 
     this.cli.filter('test/functional/*_skip.spec.js')
-    const testsFiles = await this.cli._getTestFiles()
+    const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
   })
 
@@ -121,7 +121,7 @@ test.group('Cli', (group) => {
     await fs.ensureFile(skipTestFile)
 
     this.cli.filter(['test/functional/*_skip.spec.js', 'test/unit/sample.spec.js'])
-    const testsFiles = await this.cli._getTestFiles()
+    const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [functionalTestFile])
   })
 
@@ -137,12 +137,23 @@ test.group('Cli', (group) => {
     this.cli.filter(function (file) {
       return !file.endsWith('_skip.spec.js')
     })
-    const testsFiles = await this.cli._getTestFiles()
+    const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
   })
 
   test('throw exception when filter method receives wrong data type', async (assert) => {
     const fn = () => this.cli.filter({})
     assert.throw(fn, 'cli.filter accepts an array/string of globs or a callback function')
+  })
+
+  test('remove unit tests by setting global to null', async (assert) => {
+    const unitTestFile = path.join(this.helpers.appRoot(), 'test/unit/sample.spec.js')
+    const functionalTestFile = path.join(this.helpers.appRoot(), 'test/functional/sample.spec.js')
+
+    await fs.ensureFile(unitTestFile)
+    await fs.ensureFile(functionalTestFile)
+    this.cli.unit(null)
+    const testsFiles = await this.cli.getTestFiles()
+    assert.deepEqual(testsFiles, [functionalTestFile])
   })
 })
