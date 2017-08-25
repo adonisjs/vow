@@ -127,7 +127,7 @@ class VowProvider extends ServiceProvider {
    * @return {void}
    */
   boot () {
-    const ace = require('@adonisjs/fold')
+    const ace = require('@adonisjs/ace')
     ace.addCommand('Adonis/Commands/Test')
   }
 }
