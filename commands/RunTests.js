@@ -33,7 +33,7 @@ class RunTests extends Command {
     return `test
     { type?=all: Define test types, needs to be unit or functional }
     { -b, --bail: Stop running tests on first failure }
-    { t-, --timeout: Define a global timeout for all the tests }
+    { -t, --timeout: Define a global timeout for all the tests }
     { -f, --files=@value: Pick only specific files. File names are seperated by comma }
     { -g, --grep=@value: Grep on tests title to run only selected tests }
     { --glob=@value: Define a custom glob to pick test files }`
@@ -206,6 +206,7 @@ class RunTests extends Command {
        * Running the test runner
        */
       await this.runner.run()
+      process.exit(0)
     } catch (error) {
       /**
        * If log the error when test suite was not executed.
@@ -214,6 +215,7 @@ class RunTests extends Command {
       if (!this.runner.executedStack) {
         console.error(error)
       }
+      process.exit(1)
     }
   }
 }
