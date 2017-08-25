@@ -117,6 +117,19 @@ class VowProvider extends ServiceProvider {
     this._registerApiClient()
     this._regiterTestSuite()
   }
+
+  /**
+   * When provider is booted, fold will call
+   * this method
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
+  boot () {
+    const ace = require('@adonisjs/fold')
+    ace.addCommand('Adonis/Commands/Test')
+  }
 }
 
 module.exports = VowProvider
