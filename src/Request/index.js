@@ -26,6 +26,7 @@ module.exports = function () {
       super()
       this.Config = Config
       this._cookies = []
+      this._headers = []
       this._hooks = {
         before: [],
         after: []
@@ -33,15 +34,26 @@ module.exports = function () {
     }
 
     /**
-     * Returns an array of cookies to be
+     * An array of cookies to be
      * set as header
      *
-     * @method cookies
+     * @attribute cookies
      *
      * @return {Array}
      */
     get cookies () {
       return this._cookies
+    }
+
+    /**
+     * Array of request headers
+     *
+     * @attribute headers
+     *
+     * @return {Array}
+     */
+    get headers () {
+      return this._headers
     }
 
     /**
@@ -58,6 +70,21 @@ module.exports = function () {
       const appKey = this.Config.get('app.appKey')
       value = nodeCookie.packValue(value, appKey, !!appKey)
       this._cookies.push({ key, value })
+      return this
+    }
+
+    /**
+     * Set request header/headers
+     *
+     * @method header
+     *
+     * @param  {String} key
+     * @param  {Object} value
+     *
+     * @chainable
+     */
+    header (key, value) {
+      this._headers.push({ key, value })
       return this
     }
 

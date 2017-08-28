@@ -124,4 +124,10 @@ test.group('Request', (group) => {
     })
     await request.exec('before')
   })
+
+  test('add request header', (assert) => {
+    const request = new Request(new Config())
+    request.header('Auth', '123')
+    assert.deepEqual(request.headers, [{ key: 'Auth', value: '123' }])
+  })
 })
