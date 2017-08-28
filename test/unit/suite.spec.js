@@ -151,4 +151,22 @@ test.group('Suite', () => {
     assert.lengthOf(suite.group._tests, 0)
     props.grep = null
   })
+
+  test('adding macro to one suite request should not show up on other suite', (assert) => {
+    props.grep = 'bar'
+    const suite = new Suite('foo')
+    const suite1 = new Suite('bar')
+
+    suite.trait(function ({ Request }) {
+      Request.macro('foo', () => 'bar')
+    })
+
+    suite.traits.forEach((trait) => trait.action(suite))
+
+    const request = new suite.Request()
+    assert.isFunction(request.foo)
+
+    const request1 = new suite1.Request()
+    assert.isUndefined(request1.foo)
+  })
 })

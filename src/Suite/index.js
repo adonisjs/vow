@@ -11,6 +11,7 @@
 
 const { Test, Group } = require('japa/api')
 const Context = require('../Context')
+const Request = require('../Request')
 const props = require('../../lib/props')
 
 /**
@@ -59,6 +60,14 @@ class Suite {
      * @type {Context}
      */
     this.Context = Context()
+
+    /**
+     * Reference of Request class, that should be extended
+     * by other request clients.
+     *
+     * @type {BaseRequest}
+     */
+    this.Request = Request()
 
     /**
      * The timeout to be added to all the test
