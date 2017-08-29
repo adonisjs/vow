@@ -1,7 +1,7 @@
 {
   "name": "@adonisjs/vow",
   "version": "1.0.1",
-  "description": "",
+  "description": "Test runner for Adonis framework with batteries included 🔋",
   "main": "index.js",
   "scripts": {
     "lint": "standard",
@@ -18,7 +18,7 @@
     ]
   },
   "keywords": [],
-  "author": "",
+  "author": "virk",
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/ace": "^4.0.4",
@@ -55,5 +55,17 @@
       "test",
       "commands"
     ]
-  }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-vow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-vow/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-vow#readme"
 }
