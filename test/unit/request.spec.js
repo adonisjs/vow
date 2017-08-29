@@ -13,6 +13,7 @@ const test = require('japa')
 const { Config } = require('@adonisjs/sink')
 const RequestManager = require('../../src/Request')
 const nodeCookie = require('node-cookie')
+
 const sleep = function (time) {
   return new Promise((resolve) => {
     setTimeout(resolve, time)
