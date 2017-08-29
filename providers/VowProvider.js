@@ -107,6 +107,7 @@ class VowProvider extends ServiceProvider {
    */
   _registerTestCommand () {
     this.app.bind('Adonis/Commands/Test', (app) => require('../commands/RunTests'))
+    this.app.bind('Adonis/Commands/Make:Test', (app) => require('../commands/MakeTest'))
   }
 
   /**
@@ -135,6 +136,7 @@ class VowProvider extends ServiceProvider {
   boot () {
     const ace = require('@adonisjs/ace')
     ace.addCommand('Adonis/Commands/Test')
+    ace.addCommand('Adonis/Commands/Make:Test')
   }
 }
 
