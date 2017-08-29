@@ -53,7 +53,7 @@
       "providers",
       "bin",
       "test",
-      "commands"
+      "commands/RunTests.js"
     ]
   },
   "directories": {
