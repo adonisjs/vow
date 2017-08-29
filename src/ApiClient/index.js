@@ -20,17 +20,18 @@ const requestMethods = ['post', 'get', 'patch', 'delete', 'head', 'put']
  * @constructor
  */
 class ApiClient {
-  constructor (BaseRequest, assert) {
+  constructor (BaseRequest, BaseResponse, assert) {
     debug('instantiating api client')
-    this.assert = assert
-    this.Request = require('./Request')(BaseRequest)
+    const Response = require('./Response')(BaseResponse)
+    this.Request = require('./Request')(BaseRequest, Response)
+    this._assert = assert
   }
 }
 
 requestMethods.forEach((method) => {
   ApiClient.prototype[method] = function (url) {
     url = /^http(s)?/.test(url) ? url : `${process.env.TEST_SERVER_URL}${url}`
-    return new this.Request(url, method, this.assert)
+    return new this.Request(url, method, this._assert)
   }
 })
 

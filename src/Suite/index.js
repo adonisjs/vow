@@ -13,6 +13,7 @@ const { ioc } = require('@adonisjs/fold')
 const { Test, Group } = require('japa/api')
 const Context = require('../Context')
 const Request = require('../Request')
+const Response = require('../Response')
 const props = require('../../lib/props')
 const debug = require('debug')('adonis:vow')
 
@@ -60,12 +61,20 @@ class Suite {
     this.Context = Context()
 
     /**
-     * Reference of Request class, that should be extended
+     * Reference of base Request class, that should be extended
      * by other request clients.
      *
      * @type {BaseRequest}
      */
     this.Request = Request(ioc.use('Adonis/Src/Config'))
+
+    /**
+     * Reference to base response class, that should be extended
+     * by other request clients to make response.
+     *
+     * @type {BaseResponse}
+     */
+    this.Response = Response(ioc.use('Adonis/Src/Config'))
 
     /**
      * The timeout to be added to all the test

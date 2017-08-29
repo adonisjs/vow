@@ -16,17 +16,21 @@ const PORT = '3333'
 const BASE_URL = `http://localhost:${PORT}`
 
 const BaseRequestManager = require('../../src/Request')
+const BaseResponseManager = require('../../src/Response')
+const ApiResponseManager = require('../../src/ApiClient/Response')
 const ApiRequestManager = require('../../src/ApiClient/Request')
 
 test.group('Api Client Request', () => {
   test('instantiate class with base request', (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const api = new ApiRequest('http://localhost:3333', 'get', new Config())
     assert.instanceOf(api, ApiRequest)
   })
 
   test('make http request to a given url', async (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const server = http.createServer((req, res) => res.end('handled')).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.end()
@@ -35,7 +39,8 @@ test.group('Api Client Request', () => {
   })
 
   test('send query string', async (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const server = http.createServer((req, res) => res.end(req.url)).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.query({ age: 22 }).end()
@@ -44,12 +49,13 @@ test.group('Api Client Request', () => {
   })
 
   test('add macro to BaseRequest', async (assert) => {
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
     const BaseRequest = BaseRequestManager(new Config())
     BaseRequest.macro('addAge', function () {
       this.query({ age: 22 })
       return this
     })
-    const ApiRequest = ApiRequestManager(BaseRequest)
+    const ApiRequest = ApiRequestManager(BaseRequest, ApiResponse)
     const server = http.createServer((req, res) => res.end(req.url)).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.addAge().end()
@@ -58,11 +64,12 @@ test.group('Api Client Request', () => {
   })
 
   test('execute hooks before making request', async (assert) => {
-    const BaseRequest = BaseRequestManager(new Config())
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const BaseRequest = BaseRequestManager(new Config(), ApiResponse)
     BaseRequest.before(function (request) {
       request.query({ age: 22 })
     })
-    const ApiRequest = ApiRequestManager(BaseRequest)
+    const ApiRequest = ApiRequestManager(BaseRequest, ApiResponse)
     const server = http.createServer((req, res) => res.end(req.url)).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.end()
@@ -71,7 +78,8 @@ test.group('Api Client Request', () => {
   })
 
   test('set cookies as header', async (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const server = http.createServer((req, res) => res.end(req.headers.cookie)).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.cookie('age', 22).end()
@@ -80,7 +88,8 @@ test.group('Api Client Request', () => {
   })
 
   test('set multiple cookies', async (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const server = http.createServer((req, res) => res.end(req.headers.cookie)).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.cookie('age', 22).cookie('name', 'virk').end()
@@ -89,7 +98,8 @@ test.group('Api Client Request', () => {
   })
 
   test('set headers', async (assert) => {
-    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()))
+    const ApiResponse = ApiResponseManager(BaseResponseManager(new Config()))
+    const ApiRequest = ApiRequestManager(BaseRequestManager(new Config()), ApiResponse)
     const server = http.createServer((req, res) => res.end(req.headers['content-type'])).listen(PORT)
     const api = new ApiRequest(BASE_URL, 'get', new Config())
     const { text } = await api.header('content-type', 'application/json').end()

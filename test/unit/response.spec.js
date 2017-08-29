@@ -18,12 +18,6 @@ const nodeCookie = require('node-cookie')
 const PORT = '3333'
 const BASE_URL = `http://localhost:${PORT}`
 
-const sleep = function (time) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time)
-  })
-}
-
 test.group('Response', () => {
   test('instantiate response', (assert) => {
     const Response = ResponseManager(new Config())
@@ -45,67 +39,6 @@ test.group('Response', () => {
     assert.equal(response.foo(), 'bar')
   })
 
-  test('add before response hook', (assert) => {
-    const Response = ResponseManager(new Config())
-    const fn = function () {}
-    Response.before(fn)
-    assert.deepEqual(Response._hooks.before, [fn])
-  })
-
-  test('add after response hook', (assert) => {
-    const Response = ResponseManager(new Config())
-    const fn = function () {}
-    Response.after(fn)
-    assert.deepEqual(Response._hooks.after, [fn])
-  })
-
-  test('execute hooks in sequence', async (assert) => {
-    const Response = ResponseManager(new Config())
-
-    const stack = []
-    Response.before(() => {
-      stack.push('1')
-    })
-
-    Response.before(async () => {
-      await sleep(100)
-      stack.push('2')
-    })
-
-    Response.before(() => {
-      stack.push('3')
-    })
-
-    const response = new Response()
-    await response.exec('before')
-    assert.deepEqual(stack, ['1', '2', '3'])
-  })
-
-  test('throw exception when invalid hook type is passed', async (assert) => {
-    assert.plan(1)
-
-    const Response = ResponseManager(new Config())
-    const response = new Response()
-
-    try {
-      await response.exec('foo')
-    } catch ({ message }) {
-      assert.equal(message, 'foo is not a valid hook event for vow response')
-    }
-  })
-
-  test('should have access to response instance inside hook', async (assert) => {
-    assert.plan(1)
-    const Response = ResponseManager(new Config())
-
-    Response.before((req) => {
-      assert.deepEqual(req, response)
-    })
-
-    const response = new Response()
-    await response.exec('before')
-  })
-
   test('read response cookies', async (assert) => {
     const server = http.createServer((req, res) => {
       nodeCookie.create(res, 'user', 'virk')
@@ -114,7 +47,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(new Config())
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.cookies, { user: 'virk' })
     server.close()
   })
@@ -128,7 +61,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(new Config())
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.cookies, { user: 'virk', age: '22' })
     server.close()
   })
@@ -144,7 +77,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(config)
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.cookies, { user: 'virk' })
     server.close()
   })
@@ -160,7 +93,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(config)
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.plainCookies, { user: 'virk' })
     server.close()
   })
@@ -176,7 +109,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(config)
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.cookies, { user: null })
     server.close()
   })
@@ -192,7 +125,7 @@ test.group('Response', () => {
 
     const res = await superagent.get(BASE_URL)
     const Response = ResponseManager(config)
-    const response = new Response(res.headers)
+    const response = new Response(assert, res.headers)
     assert.deepEqual(response.plainCookies, { user: 'virk' })
     server.close()
   })

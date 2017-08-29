@@ -11,7 +11,7 @@
 
 const superagent = require('superagent')
 
-module.exports = function (BaseRequest) {
+module.exports = function (BaseRequest, Response) {
   /**
    * The api request class is used to make
    * HTTP requests.
@@ -23,7 +23,7 @@ module.exports = function (BaseRequest) {
     constructor (url, verb, assert) {
       super()
       this._agent = superagent[verb](url)
-      this.assert = assert
+      this._assert = assert
     }
 
     /* istanbul ignore next */
@@ -255,10 +255,25 @@ module.exports = function (BaseRequest) {
         this.headers.forEach((header) => (this._agent.set(header.key, header.value)))
       }
 
-      const response = await this._agent
+      let response = null
+
+      try {
+        response = await this._agent
+      } catch (error) {
+        response = error.response
+      }
+
       await this.exec('after')
-      return response
+      return new this.constructor.Response(response, this._assert)
     }
   }
+
+  /**
+   * Reference to response class.
+   *
+   * @type {ApiResponse}
+   */
+  ApiRequest.Response = Response
+
   return ApiRequest
 }

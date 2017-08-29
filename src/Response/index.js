@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
 */
 
+const urlModule = require('url')
 const Macroable = require('macroable')
 const debug = require('debug')('adonis:vow')
 const nodeCookie = require('node-cookie')
@@ -26,59 +27,13 @@ module.exports = function (Config) {
    * @constructor
    */
   class Response extends Macroable {
-    constructor (headers) {
+    constructor (assert, headers) {
       super()
-      this._headers = headers || {}
+      this._assert = assert
+      this.headers = headers || {}
       this._cookieString = this._parseCookies()
       this._cookies = null
       this._plainCookies = null
-    }
-
-    /**
-     * Add a new hook before request starts
-     *
-     * @method before
-     * @static
-     *
-     * @param  {Function} fn
-     *
-     * @chainable
-     */
-    static before (fn) {
-      this._hooks.before.push(fn)
-      return this
-    }
-
-    /**
-     * Add a new hook for after request completes
-     *
-     * @method after
-     * @static
-     *
-     * @param  {Function} fn
-     *
-     * @chainable
-     */
-    static after (fn) {
-      this._hooks.after.push(fn)
-      return this
-    }
-
-    /**
-     * Hydrate request constructor properties, macros
-     * and getters
-     *
-     * @method hydrate
-     * @static
-     *
-     * @return {void}
-     */
-    static hydrate () {
-      super.hydrate()
-      this._hooks = {
-        before: [],
-        after: []
-      }
     }
 
     /**
@@ -92,7 +47,7 @@ module.exports = function (Config) {
      * @private
      */
     _parseCookies () {
-      const setCookieHeader = this._headers['set-cookie'] || []
+      const setCookieHeader = this.headers['set-cookie'] || []
       const cookies = cookieParser.filterExpired(setCookieHeader.map((cookie) => cookieParser.parse(cookie)))
       return cookies.map((cookie) => `${cookie.key}=${cookie.value}`).join(';')
     }
@@ -106,6 +61,7 @@ module.exports = function (Config) {
      */
     get cookies () {
       const appKey = this.constructor.Config.get('app.appKey')
+      /* istanbul ignore else */
       if (!this._cookies) {
         this._cookies = nodeCookie.parse({ headers: { cookie: this._cookieString } }, appKey, !!appKey)
       }
@@ -120,6 +76,7 @@ module.exports = function (Config) {
      * @return {Object}
      */
     get plainCookies () {
+      /* istanbul ignore else */
       if (!this._plainCookies) {
         this._plainCookies = nodeCookie.parse({ headers: { cookie: this._cookieString } })
       }
@@ -127,23 +84,142 @@ module.exports = function (Config) {
     }
 
     /**
-     * Execute request hooks in sequence
+     * Asserts the response status
      *
-     * @method exec
+     * @method assertStatus
      *
-     * @param  {String} event - Must be `before` or `after`
+     * @param  {Number}     expected
      *
      * @return {void}
      */
-    async exec (event) {
-      if (event !== 'before' && event !== 'after') {
-        throw new Error(`${event} is not a valid hook event for vow response`)
-      }
+    assertStatus (expected) {
+      this._assert.equal(this.status, expected)
+    }
 
-      const hooks = this.constructor._hooks[event]
-      for (const hook of hooks) {
-        await hook(this)
+    /**
+     * Asserts the response text
+     *
+     * @method assertText
+     *
+     * @param  {String}   expected
+     *
+     * @return {void}
+     */
+    assertText (expected) {
+      this._assert.equal(this.text, expected)
+    }
+
+    /**
+     * Asserts request body
+     *
+     * @method assertBody
+     *
+     * @param  {Mixed}   expected
+     *
+     * @return {void}
+     */
+    assertBody (expected) {
+      try {
+        this._assert.deepEqual(this.body, expected)
+      } catch (error) {
+        this._assert.equal(this.text, expected)
       }
+    }
+
+    /**
+     * Asserts json payload against request body
+     *
+     * @method assertJSON
+     *
+     * @param  {Object}   expected
+     *
+     * @return {void}
+     */
+    assertJSON (expected) {
+      this._assert.deepEqual(this.body, expected)
+    }
+
+    /**
+     * Assert json subset
+     *
+     * @method assertJSONSubset
+     *
+     * @param  {Object}         expected
+     *
+     * @return {void}
+     */
+    assertJSONSubset (expected) {
+      this._assert.containSubset(this.body, expected)
+    }
+
+    /**
+     * Asset for error text on the body
+     *
+     * @method assertError
+     *
+     * @param  {String}    expected
+     *
+     * @return {void}
+     */
+    assertError (expected) {
+      this.assertBody(expected)
+    }
+
+    /**
+     * Asserts that request was redirected to a given
+     * url
+     *
+     * @method assertRedirect
+     *
+     * @param  {String}       expectedUrl
+     *
+     * @return {void}
+     */
+    assertRedirect (expectedUrl) {
+      const routes = this.redirects.map((url) => urlModule.parse(url).pathname)
+      this._assert.include(routes, expectedUrl, `Request was not redirected to ${expectedUrl}`)
+    }
+
+    /**
+     * Asserts the cookie value
+     *
+     * @method assertCookie
+     *
+     * @param  {String}     key
+     * @param  {Mixed}     value
+     *
+     * @return {void}
+     */
+    assertCookie (key, value) {
+      this._assert.equal(this.cookies[key], value)
+    }
+
+    /**
+     * Asserts the plain cookie value
+     *
+     * @method assertPlainCookie
+     *
+     * @param  {String}          key
+     * @param  {Mixed}          value
+     *
+     * @return {void}
+     */
+    assertPlainCookie (key, value) {
+      this._assert.equal(this.plainCookies[key], value)
+    }
+
+    /**
+     * Assert header value
+     *
+     * @method assertHeader
+     *
+     * @param  {String}     key
+     * @param  {Mixed}     value
+     *
+     * @return {void}
+     */
+    assertHeader (key, value) {
+      this._assert.equal(this.headers[key.toLowerCase()], value)
     }
   }
 
@@ -152,14 +228,6 @@ module.exports = function (Config) {
    */
   Response._macros = {}
   Response._getters = {}
-
-  /**
-   * For hooks
-   */
-  Response._hooks = {
-    before: [],
-    after: []
-  }
 
   /**
    * Reference to the Config provider
