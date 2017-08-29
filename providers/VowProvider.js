@@ -59,6 +59,13 @@ class VowProvider extends ServiceProvider {
       const Runner = app.use('Test/Runner')
       return (title) => {
         const suite = Runner.suite(title)
+        /**
+         * Returning an object of functions, which are reference to the
+         * suite class functions.
+         *
+         * This is done, since destructuring functions losses the scope
+         * and `this` resolves to undefined.
+         */
         return _.transform(Object.getOwnPropertyNames(Object.getPrototypeOf(suite)), (result, prop) => {
           result[prop] = function (...args) {
             return suite[prop](...args)
@@ -79,11 +86,10 @@ class VowProvider extends ServiceProvider {
    */
   _registerApiClient () {
     this.app.bind('Test/ApiClient', (app) => {
-      const Env = app.use('Adonis/Src/Env')
       const ApiClient = require('../src/ApiClient')
-      return function ({ Context }) {
+      return function ({ Context, Request, Response }) {
         Context.getter('client', function () {
-          return new ApiClient(Env, this.assert)
+          return new ApiClient(Request, Response, this.assert)
         }, true)
       }
     })
@@ -111,11 +117,11 @@ class VowProvider extends ServiceProvider {
    * @return {void}
    */
   register () {
+    this._regiterTestSuite()
     this._registerTestRunner()
     this._registerCli()
     this._registerTestCommand()
     this._registerApiClient()
-    this._regiterTestSuite()
   }
 
   /**

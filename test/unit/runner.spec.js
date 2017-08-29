@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const { setupResolver, Env } = require('@adonisjs/sink')
+const { setupResolver, Env, Config } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
 const Runner = require('../../src/Runner')
 const props = require('../../lib/props')
@@ -19,6 +19,9 @@ const EventEmitter = require('events').EventEmitter
 test.group('Runner', (group) => {
   group.before(() => {
     setupResolver()
+    ioc.fake('Adonis/Src/Config', () => {
+      return new Config()
+    })
   })
 
   group.beforeEach(() => {

@@ -1,3 +1,17 @@
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/adonisjs/adonis-vow/compare/v1.0.1...v1.0.2) (2017-08-29)
+
+
+### Features
+
+* **api-client:** implement api-client ([1e5edd1](https://github.com/adonisjs/adonis-vow/commit/1e5edd1))
+* **api-response:** add api client response ([893471b](https://github.com/adonisjs/adonis-vow/commit/893471b))
+* **request:** add base request class ([e50291f](https://github.com/adonisjs/adonis-vow/commit/e50291f))
+* **request:** support for adding headers ([2659ee6](https://github.com/adonisjs/adonis-vow/commit/2659ee6))
+* **response:** add base response class ([805be5a](https://github.com/adonisjs/adonis-vow/commit/805be5a))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/adonisjs/adonis-vow/compare/v1.0.0...v1.0.1) (2017-08-25)
 

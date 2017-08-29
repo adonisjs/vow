@@ -9,11 +9,19 @@
  * file that was distributed with this source code.
 */
 
+const { ioc } = require('@adonisjs/fold')
+const { Config } = require('@adonisjs/sink')
 const test = require('japa')
 const Suite = require('../../src/Suite')
 const props = require('../../lib/props')
 
-test.group('Suite', () => {
+test.group('Suite', (group) => {
+  group.before(() => {
+    ioc.fake('Adonis/Src/Config', () => {
+      return new Config()
+    })
+  })
+
   test('add a new test to the suite', (assert) => {
     const suite = new Suite('foo')
     suite.test('hello', function () {})
@@ -150,5 +158,23 @@ test.group('Suite', () => {
     suite.test('i am just foo', function () {})
     assert.lengthOf(suite.group._tests, 0)
     props.grep = null
+  })
+
+  test('adding macro to one suite request should not show up on other suite', (assert) => {
+    props.grep = 'bar'
+    const suite = new Suite('foo')
+    const suite1 = new Suite('bar')
+
+    suite.trait(function ({ Request }) {
+      Request.macro('foo', () => 'bar')
+    })
+
+    suite.traits.forEach((trait) => trait.action(suite))
+
+    const request = new suite.Request()
+    assert.isFunction(request.foo)
+
+    const request1 = new suite1.Request()
+    assert.isUndefined(request1.foo)
   })
 })

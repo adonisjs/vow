@@ -1,148 +1,118 @@
 
-# Testing In AdonisJs
+# Adonis vow 💂
 
-> This readme is the scribble board for now. The final readme will be written later
-
-Testing in AdonisJs should be natural, simple and intutive enough that even a entry level guy can write tests.
-
-One should be able to do follow
-
-1. Load entire adonisjs app.
-2. Run custom code before the test-runner and after the test-runner.
-3. Run stuff before the test-suite and after the test-suite
-4. Use any service providers.
-5. Fake ioc container bindings.
-6. Use middleware for testing
+| Test runner for Adonis framework with batteries included 🔋
 
 
-## Dummy syntax.
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
+
+Adonis vow is the test runner for Adonis framework, just install and register the provider and BOOM it just works.
+
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="40px">
+
+## Setup
+
+```bash
+adonis install @adonisjs/vow
+```
+
+Read setup [instructions](instructions.md)
+
+## Concepts
+
+The test runner is bare bones that you need to setup and run tests using your command line. But it comes with a powerful concept of traits.
+
+### Traits
+
+Traits are building blocks for your tests. Features like **Database transactions**, **Api client**, **Browser client**, they all are built on top of the API provided by traits.
 
 ```js
-const Runner = use('Test/Runner')
+const { trait } = use('Test/Suite')('Sample test suite')
 
-// Applied on all the suites and also re-initiatied for each
-// suite since context is passed along.
-Runner.trait([''])
+trait((suiteInstance) => {
+})
 ```
+
+### Suite
+A test suite is a combination of tests that you want to group inside a single file or group them logically.
+
+Each suite has it's own set of traits, which means adding traits for a single suite, doesn't collides with the other suite :)
+
+### Hooks
+Each suite has a lifecycle and you can hook into that lifecycle by adding methods to one of the following events.
 
 ```js
-const Suite = use('Test/Suite')()
+const suite = use('Test/Suite')('Sample test suite') 
 
-Suite.trait('Lucid/AutoRoll')
-Suite.trait('Test/Chrome', options)
-Suite.traits([{ 'Test/Chrome': options }])
-
-Suite.before(function () {
+suite.before(() => {
+ // executed before the suite
 })
 
-Suite.after(function () {
+suite.after(() => {
+ // executed after the suite
 })
 
-Suite.beforeEach(function () {  
+suite.beforeEach(() => {
+ // executed before each test
 })
 
-Suite.afterEach(function () {
-})
-
-Suite.test('sadasd', async (assert, { browser }) => {
-  await browser.visit('')
-})
-
-Suite.test('sadasd', async (assert, { browser }) => {
-    await browser.visit('')
+suite.afterEach(() => {
+ // executed after each test
 })
 ```
 
-Each trait will received following to setup lifecycle
+### Context
+
+Each test suite has a context, which is instantiated and passed to each test, so this is the right place to hook stuff that you want to be available to tests.
 
 ```js
-function chromeTrait (suiteInstance) { 
-    suiteInstance.beforeEach(() => {
-    })
+const { trait, test } = use('Test/Suite')('Sample test suite')
 
-    Context.getter('browser', function () {
-        return new Browser()
-    }, true)
-}
-```
-
-Also with class
-
-```js
-class ChromeTrait {
-    static get inject () {
-
-    }
-
-    handle (suiteInstance) {
-        suiteInstance.beforeEach(() => {
-        })
-    }
-}
-```
-
-In nutshell we have
-
-1. Test Runner - The guy which starts and ends the tests
-2. Test Suite - Each suite can have traits, which are called as soon as user calls `test.trait()`
-3. Context ( set for each test ) - Each tests has it's own context
-
-Rest all is JAPA and other tools
-
-
-## Using API Client
-
-```js
-const { triat, test } = use('Test/Suite')
-
-trait('Test/ApiClient')
-
-test('test api', ({ assert, client }) => {
-  await client.get('/')
-})
-```
-
-Api client
-
-```js
-const supertest = require('supertest')
-
-function (suite) {
-}
-```
-
-
-
-## Folder Structure
-
-```
-|__ Functional
-|_____ test.spec.js
-|__ Unit
-|_____ test.spec.js
-```
-
-Also one can have `vowFile.js` to define the cli behavior
-
-```js
-const cli = use('Test/Cli')
-
-cli.envFile('') // custom env file
-
-cli.filter(function () {
+trait((suite) => {
+  suite.Context.getter('foo', () => 'bar')
 })
 
-cli.grep('custom grep')
 
-cli.unit('') // define path to unit tests
-cli.functional('') // define path to functional tests
+test('foo is bar', (ctx) => {
+  ctx.assert(ctx.foo, 'bar')
+})
 
-// Add traits to suites globally
-cli.suite('glob pattern', function ({ path, trait }) {
-  if (path.endsWith('browser.js')) {
-    trait(['Test/Browser'], { driver: 'chrome' })
-  }
+// using es6 destructuring
+test('foo is bar', ({ foo, assert }) => {
+  assert(foo, 'bar')
 })
 ```
 
 
+### Development
+
+The tests for the test runner are written using [japa](https://github.com/thetutlage/japa) and make sure to go through the docs.
+
+## Release History
+
+Checkout [CHANGELOG.md](CHANGELOG.md) file for release history.
+
+## Meta
+
+AdonisJs – [@adonisframework](https://twitter.com/adonisframework) – virk@adonisjs.com
+
+Checkout [LICENSE.txt](LICENSE.txt) for license information
+
+Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
+
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/adonis-vow/master.svg?style=flat-square
+
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-vow
+
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/vow.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@adonisjs/vow
+
+[travis-image]: https://img.shields.io/travis/adonisjs/adonis-vow/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/adonisjs/adonis-vow
+
+[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-vow/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-vow
