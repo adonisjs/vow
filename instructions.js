@@ -22,8 +22,9 @@ async function copyVowFile (cli, appRoot) {
 
 async function copyExampleTestCase (cli, appRoot) {
   try {
-    await cli.copy(path.join(__dirname, 'templates/unitTest.js'), path.join(appRoot, 'test/unit/example.spec.js'))
-    cli.command.completed('create', 'test/unit/example.spec.js')
+    const template = await cli.command.readFile(path.join(__dirname, 'templates/unitTest.mustache'), 'utf-8')
+    await cli.command.generateFile(path.join(appRoot, 'test/unit/Example.spec.js'), template, { name: 'Example' })
+    cli.command.completed('create', 'test/unit/Example.spec.js')
   } catch (error) {
     // ignore error
   }
