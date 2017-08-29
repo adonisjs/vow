@@ -1,3 +1,15 @@
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/adonisjs/adonis-vow/compare/v1.0.3...v1.0.4) (2017-08-29)
+
+
+### Bug Fixes
+
+* **api-response:** throw error happen out of request lifecycle ([e4c35c3](https://github.com/adonisjs/adonis-vow/commit/e4c35c3))
+* **cookieParser:** ensure value is string before calling trim ([132f433](https://github.com/adonisjs/adonis-vow/commit/132f433))
+* **runner,vowfile:** fix typos ([08fdb0e](https://github.com/adonisjs/adonis-vow/commit/08fdb0e))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/adonisjs/adonis-vow/compare/v1.0.2...v1.0.3) (2017-08-29)
 

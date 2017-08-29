@@ -59,7 +59,7 @@ class TestRunner {
    * @private
    */
   _runTraits (suite) {
-    debug('running %d trait(s) for %s suite', suite.traits.length, suite.group.title)
+    debug('running %d trait(s) for %s suite', suite.traits.length, suite.group._title)
     suite.traits.forEach((trait) => {
       const resolvedTrait = typeof (trait.action) === 'function'
       ? trait.action
