@@ -40,7 +40,8 @@
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
     "node-cookie": "^2.0.2",
-    "p-series": "^1.0.0"
+    "p-series": "^1.0.0",
+    "superagent": "^3.6.0"
   },
   "config": {
     "commitizen": {
@@ -51,7 +52,8 @@
     "exclude": [
       "providers",
       "bin",
-      "test"
+      "test",
+      "commands"
     ]
   }
 }

@@ -79,11 +79,11 @@ class VowProvider extends ServiceProvider {
    */
   _registerApiClient () {
     this.app.bind('Test/ApiClient', (app) => {
-      const Env = app.use('Adonis/Src/Env')
+      const Config = app.use('Adonis/Src/Config')
       const ApiClient = require('../src/ApiClient')
-      return function ({ Context }) {
+      return function ({ Context, Request }) {
         Context.getter('client', function () {
-          return new ApiClient(Env, this.assert)
+          return new ApiClient(Config, Request, this.assert)
         }, true)
       }
     })

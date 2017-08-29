@@ -11,7 +11,7 @@
 
 const test = require('japa')
 const { Config } = require('@adonisjs/sink')
-const Request = require('../../src/Request')()
+const RequestManager = require('../../src/Request')
 const nodeCookie = require('node-cookie')
 const sleep = function (time) {
   return new Promise((resolve) => {
@@ -20,29 +20,29 @@ const sleep = function (time) {
 }
 
 test.group('Request', (group) => {
-  group.beforeEach(() => {
-    Request.hydrate()
-  })
-
   test('instantiate request', (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
+    const request = new Request()
     assert.instanceOf(request, Request)
   })
 
   test('define request getter', (assert) => {
+    const Request = RequestManager(new Config())
     Request.getter('foo', () => 'bar')
-    const request = new Request(new Config())
+    const request = new Request()
     assert.equal(request.foo, 'bar')
   })
 
   test('define request macro', (assert) => {
+    const Request = RequestManager(new Config())
     Request.macro('foo', () => 'bar')
-    const request = new Request(new Config())
+    const request = new Request()
     assert.equal(request.foo(), 'bar')
   })
 
   test('add new cookie', (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
+    const request = new Request()
     request.cookie('name', 'foo')
     assert.deepEqual(request.cookies, [{ key: 'name', value: 'foo' }])
   })
@@ -50,6 +50,7 @@ test.group('Request', (group) => {
   test('add encrypted cookie', (assert) => {
     const config = new Config()
     config.set('app.appKey', 'alongrandomstring')
+    const Request = RequestManager(config)
 
     const request = new Request(config)
     request.cookie('name', 'foo')
@@ -57,35 +58,37 @@ test.group('Request', (group) => {
   })
 
   test('add before request hook', (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
     const fn = function () {}
-    request.before(fn)
-    assert.deepEqual(request._hooks.before, [fn])
+    Request.before(fn)
+    assert.deepEqual(Request._hooks.before, [fn])
   })
 
   test('add after request hook', (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
     const fn = function () {}
-    request.after(fn)
-    assert.deepEqual(request._hooks.after, [fn])
+    Request.after(fn)
+    assert.deepEqual(Request._hooks.after, [fn])
   })
 
   test('execute hooks in sequence', async (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
+
     const stack = []
-    request.before(() => {
+    Request.before(() => {
       stack.push('1')
     })
 
-    request.before(async () => {
+    Request.before(async () => {
       await sleep(100)
       stack.push('2')
     })
 
-    request.before(() => {
+    Request.before(() => {
       stack.push('3')
     })
 
+    const request = new Request()
     await request.exec('before')
     assert.deepEqual(stack, ['1', '2', '3'])
   })
@@ -93,20 +96,8 @@ test.group('Request', (group) => {
   test('throw exception when invalid hook type is passed', async (assert) => {
     assert.plan(1)
 
-    const request = new Request(new Config())
-    const stack = []
-    request.before(() => {
-      stack.push('1')
-    })
-
-    request.before(async () => {
-      await sleep(100)
-      stack.push('2')
-    })
-
-    request.before(() => {
-      stack.push('3')
-    })
+    const Request = RequestManager(new Config())
+    const request = new Request()
 
     try {
       await request.exec('foo')
@@ -117,17 +108,29 @@ test.group('Request', (group) => {
 
   test('should have access to request instance inside hook', async (assert) => {
     assert.plan(1)
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
 
-    request.before((req) => {
+    Request.before((req) => {
       assert.deepEqual(req, request)
     })
+
+    const request = new Request()
     await request.exec('before')
   })
 
   test('add request header', (assert) => {
-    const request = new Request(new Config())
+    const Request = RequestManager(new Config())
+
+    const request = new Request()
     request.header('Auth', '123')
     assert.deepEqual(request.headers, [{ key: 'Auth', value: '123' }])
+  })
+
+  test('remove hooks on hydrate', (assert) => {
+    const Request = RequestManager(new Config())
+    Request.before(function () {})
+    assert.isFunction(Request._hooks.before[0])
+    Request.hydrate()
+    assert.deepEqual(Request._hooks.before, [])
   })
 })

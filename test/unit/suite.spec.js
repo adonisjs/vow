@@ -9,11 +9,19 @@
  * file that was distributed with this source code.
 */
 
+const { ioc } = require('@adonisjs/fold')
+const { Config } = require('@adonisjs/sink')
 const test = require('japa')
 const Suite = require('../../src/Suite')
 const props = require('../../lib/props')
 
-test.group('Suite', () => {
+test.group('Suite', (group) => {
+  group.before(() => {
+    ioc.fake('Adonis/Src/Config', () => {
+      return new Config()
+    })
+  })
+
   test('add a new test to the suite', (assert) => {
     const suite = new Suite('foo')
     suite.test('hello', function () {})

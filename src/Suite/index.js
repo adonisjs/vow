@@ -9,15 +9,12 @@
  * file that was distributed with this source code.
 */
 
+const { ioc } = require('@adonisjs/fold')
 const { Test, Group } = require('japa/api')
 const Context = require('../Context')
 const Request = require('../Request')
 const props = require('../../lib/props')
-
-/**
- * @module Adonis
- * @submodule vow
- */
+const debug = require('debug')('adonis:vow')
 
 /**
  * The test suite is a group of tests under one file. Suite
@@ -31,6 +28,7 @@ const props = require('../../lib/props')
  */
 class Suite {
   constructor (title) {
+    debug('instantiating %s suite', title)
     /**
      * Each suite is a japa group with some extras
      * on top of it.
@@ -67,7 +65,7 @@ class Suite {
      *
      * @type {BaseRequest}
      */
-    this.Request = Request()
+    this.Request = Request(ioc.use('Adonis/Src/Config'))
 
     /**
      * The timeout to be added to all the test

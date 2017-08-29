@@ -11,8 +11,11 @@
 
 const Macroable = require('macroable')
 const nodeCookie = require('node-cookie')
+const debug = require('debug')('adonis:vow')
 
-module.exports = function () {
+module.exports = function (Config) {
+  debug('creating isolated request for the suite')
+
   /**
    * This is base request class to be used
    * by other request clients. For example:
@@ -22,11 +25,53 @@ module.exports = function () {
    * @constructor
    */
   class Request extends Macroable {
-    constructor (Config) {
+    constructor () {
       super()
-      this.Config = Config
       this._cookies = []
       this._headers = []
+    }
+
+    /**
+     * Add a new hook before request starts
+     *
+     * @method before
+     * @static
+     *
+     * @param  {Function} fn
+     *
+     * @chainable
+     */
+    static before (fn) {
+      this._hooks.before.push(fn)
+      return this
+    }
+
+    /**
+     * Add a new hook for after request completes
+     *
+     * @method after
+     * @static
+     *
+     * @param  {Function} fn
+     *
+     * @chainable
+     */
+    static after (fn) {
+      this._hooks.after.push(fn)
+      return this
+    }
+
+    /**
+     * Hydrate request constructor properties, macros
+     * and getters
+     *
+     * @method hydrate
+     * @static
+     *
+     * @return {void}
+     */
+    static hydrate () {
+      super.hydrate()
       this._hooks = {
         before: [],
         after: []
@@ -67,9 +112,24 @@ module.exports = function () {
      * @chainable
      */
     cookie (key, value) {
-      const appKey = this.Config.get('app.appKey')
+      const appKey = this.constructor.Config.get('app.appKey')
       value = nodeCookie.packValue(value, appKey, !!appKey)
       this._cookies.push({ key, value })
+      return this
+    }
+
+    /**
+     * Adds a plain cookie to the cookie store
+     *
+     * @method plainCookie
+     *
+     * @param  {String}    key
+     * @param  {Mixed}     value
+     *
+     * @chainable
+     */
+    plainCookie (key, value) {
+      this._cookies.push({ key, value: nodeCookie.packValue(value) })
       return this
     }
 
@@ -89,34 +149,6 @@ module.exports = function () {
     }
 
     /**
-     * Add a new hook before request starts
-     *
-     * @method before
-     *
-     * @param  {Function} fn
-     *
-     * @chainable
-     */
-    before (fn) {
-      this._hooks.before.push(fn)
-      return this
-    }
-
-    /**
-     * Add a new hook for after request completes
-     *
-     * @method after
-     *
-     * @param  {Function} fn
-     *
-     * @chainable
-     */
-    after (fn) {
-      this._hooks.after.push(fn)
-      return this
-    }
-
-    /**
      * Execute request hooks in sequence
      *
      * @method exec
@@ -130,7 +162,7 @@ module.exports = function () {
         throw new Error(`${event} is not a valid hook event for vow request`)
       }
 
-      const hooks = this._hooks[event]
+      const hooks = this.constructor._hooks[event]
       for (const hook of hooks) {
         await hook(this)
       }
@@ -142,6 +174,19 @@ module.exports = function () {
    */
   Request._macros = {}
   Request._getters = {}
+
+  /**
+   * For hooks
+   */
+  Request._hooks = {
+    before: [],
+    after: []
+  }
+
+  /**
+   * Reference to the Config provider
+   */
+  Request.Config = Config
 
   return Request
 }

@@ -61,13 +61,21 @@ class TestRunner {
   _runTraits (suite) {
     debug('running %d trait(s) for %s suite', suite.traits.length, suite.group.title)
     suite.traits.forEach((trait) => {
-      if (typeof (trait.action) === 'function') {
-        return trait.action(suite, trait.options)
-      }
-      const resolvedTrait = resolver.resolve(trait.action)
+      const resolvedTrait = typeof (trait.action) === 'function'
+      ? trait.action
+      : resolver.resolve(trait.action)
+
+      /**
+       * If resolved trait is a class with handle
+       * method on it
+       */
       if (resolvedTrait.handle) {
         return resolvedTrait.handle(suite, trait.options)
       }
+
+      /**
+       * Otherwise trait is a closure
+       */
       resolvedTrait(suite, trait.options)
     })
   }
@@ -115,11 +123,12 @@ class TestRunner {
    *
    * @param  {Number} timeout
    *
-   * @return {void}
+   * @chainable
    */
   timeout (timeout) {
     debug('setting global timeout as %s', timeout)
     props.timeout = timeout
+    return this
   }
 
   /**
@@ -129,11 +138,12 @@ class TestRunner {
    *
    * @param  {Boolean} state
    *
-   * @return {void}
+   * @chainable
    */
   bail (state) {
     debug('toggling bail status to %s', state)
     props.bail = state
+    return this
   }
 
   /**
@@ -220,6 +230,7 @@ class TestRunner {
         this._runTraits(suite)
         groups.push(suite.group)
       })
+
       this.executedStack = true
       debug('executing tests')
       await new Runner(groups, this._reporter, props).run()

@@ -10,8 +10,10 @@
 */
 
 const Macroable = require('macroable')
+const debug = require('debug')('adonis:vow')
 
 module.exports = function () {
+  debug('creating isolated context for the suite')
   class Context extends Macroable {}
   Context._macros = {}
   Context._getters = {}
