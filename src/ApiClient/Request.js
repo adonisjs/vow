@@ -260,6 +260,13 @@ module.exports = function (BaseRequest, Response) {
       try {
         response = await this._agent
       } catch (error) {
+        /**
+         * Throw error when not a response
+         * error
+         */
+        if (!error.response) {
+          throw error
+        }
         response = error.response
       }
 
