@@ -130,6 +130,16 @@ class RunTests extends Command {
     this.runner.bail(bail || false)
 
     /**
+     * If there is a global timeout set it on
+     * runner
+     */
+    timeout = Number(timeout)
+    if (timeout && !isNaN(timeout)) {
+      debug('global timeout %d', timeout)
+      this.runner.timeout(timeout)
+    }
+
+    /**
      * If grep statement is defined, use it
      */
     if (grep) {
@@ -151,16 +161,6 @@ class RunTests extends Command {
      */
     if (type === 'functional' || (typeof (glob) === 'string' && glob)) {
       this.cli.unit(null)
-    }
-
-    /**
-     * If there is a global timeout set it on
-     * runner
-     */
-    timeout = Number(timeout)
-    if (timeout && !isNaN(timeout)) {
-      debug('global timeout %d', timeout)
-      this.runner.timeout(timeout)
     }
 
     /**
@@ -195,6 +195,7 @@ class RunTests extends Command {
       if (!process.env.TEST_SERVER_URL) {
         process.env.TEST_SERVER_URL = `http://${process.env.HOST}:${process.env.PORT}`
       }
+
       debug('running test server on %s', process.env.TEST_SERVER_URL)
 
       /**
