@@ -214,4 +214,21 @@ test.group('Api Response', (group) => {
     response.assertRedirect('/there')
     server.close()
   })
+
+  test('get reference to app errors', async (assert) => {
+    const config = new Config()
+    config.set('app.appKey', 'averylongrandomkey')
+
+    const server = http.createServer((req, res) => {
+      res.writeHead(500)
+      res.end(new Error('foo').toString())
+    }).listen(PORT)
+
+    const BaseResponse = BaseResponseManager(config)
+    const BaseRequest = BaseRequestManager(config)
+    const api = new ApiClient(BaseRequest, BaseResponse, assert)
+    const response = await api.get('/').end()
+    assert.isDefined(response.error)
+    server.close()
+  })
 })

@@ -25,6 +25,17 @@ module.exports = function (BaseResponse) {
     }
 
     /**
+     * Reference to response error, only if exists
+     *
+     * @method error
+     *
+     * @return {Object|Undefined}
+     */
+    get error () {
+      return this._res.error
+    }
+
+    /**
      * Response status
      *
      * @attribute status
