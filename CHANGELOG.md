@@ -1,3 +1,13 @@
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/adonisjs/adonis-vow/compare/v1.0.4...v1.0.5) (2017-09-08)
+
+
+### Features
+
+* **response:** attach error prop when exists ([8ee7b92](https://github.com/adonisjs/adonis-vow/commit/8ee7b92))
+
+
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://github.com/adonisjs/adonis-vow/compare/v1.0.3...v1.0.4) (2017-08-29)
 
