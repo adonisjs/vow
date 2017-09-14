@@ -31,7 +31,7 @@ class RunTests extends Command {
    */
   static get signature () {
     return `test
-    { type?=all: Define test types, needs to be unit or functional }
+    { group?=all: Define the test groups to be executed. Multiple groups are seperated by comma }
     { -b, --bail: Stop running tests on first failure }
     { -t, --timeout: Define a global timeout for all the tests }
     { -f, --files=@value: Pick only specific files. File names are seperated by comma }
@@ -85,35 +85,12 @@ class RunTests extends Command {
   }
 
   /**
-   * Loads the `.env.test` file from the application root
-   * directory. If file doesn't exists it will ignore
-   * it.
-   *
-   * @method _requireTestEnvFile
-   * @async
-   *
-   * @param  {String}            projectRoot
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  async _requireTestEnvFile (projectRoot) {
-    const testEnvFile = path.join(projectRoot, '.env.testing')
-    const exists = await this.pathExists(testEnvFile)
-    if (exists) {
-      debug('loading .env.testing file to merge the env variables')
-      this.env.load(testEnvFile)
-    }
-  }
-
-  /**
    * Handle method called by ace when test command
    * is executed
    *
    * @method handle
    *
-   * @param  {String}  options.type
+   * @param  {String}  options.group
    * @param  {Boolean} options.bail
    * @param  {Number}  options.timeout
    * @param  {String}  options.files
@@ -122,9 +99,8 @@ class RunTests extends Command {
    *
    * @return {void}
    */
-  async handle ({ type }, { bail, timeout, files, grep, glob }) {
+  async handle ({ group }, { bail, timeout, files, grep, glob }) {
     const projectRoot = this.cli.projectRoot
-    await this._requireTestEnvFile(projectRoot)
     this._requireVowFile(projectRoot)
 
     this.runner.bail(bail || false)
@@ -148,19 +124,26 @@ class RunTests extends Command {
     }
 
     /**
-     * If user has asked to run only unit tests,
-     * set functional tests glob to null
+     * Override all existing groups with a custom
+     * glob group.
      */
-    if (type === 'unit' || (typeof (glob) === 'string' && glob)) {
-      this.cli.functional(glob)
+    if (typeof (glob) === 'string' && glob) {
+      this.cli.setGroups({ 'glob': glob })
     }
 
     /**
-     * If user has asked for functional tests, then
-     * set unit tests glob to null
+     * Only run groups defined by the end user
      */
-    if (type === 'functional' || (typeof (glob) === 'string' && glob)) {
-      this.cli.unit(null)
+    if (typeof (group) === 'string' && group !== 'all') {
+      const groups = group.split(',').map((group) => group.trim())
+      const selectedGroups = _.transform(this.cli.getGroups(), (result, glob, name) => {
+        if (_.includes(groups, name)) {
+          result[name] = glob
+        }
+        return result
+      }, {})
+      debug('executing %j groups', selectedGroups)
+      this.cli.setGroups(selectedGroups)
     }
 
     /**

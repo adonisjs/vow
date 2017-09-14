@@ -1,3 +1,13 @@
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/adonisjs/adonis-vow/compare/v1.0.5...v1.0.6) (2017-09-14)
+
+
+### Features
+
+* **groups:** add concept of groups in tests ([ee08478](https://github.com/adonisjs/adonis-vow/commit/ee08478))
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/adonisjs/adonis-vow/compare/v1.0.4...v1.0.5) (2017-09-08)
 
