@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
 */
 
+const _ = require('lodash')
 const path = require('path')
 const globby = require('globby')
 const debug = require('debug')('adonis:vow:cli')
@@ -26,8 +27,10 @@ const debug = require('debug')('adonis:vow:cli')
 class Cli {
   constructor (Env, Helpers) {
     this.projectRoot = Helpers.appRoot()
-    this._unitTests = Env.get('UNIT_TESTS', 'test/unit/*.spec.js')
-    this._functionalTests = Env.get('FUNCTIONAL_TESTS', 'test/functional/*.spec.js')
+    this._testGroups = {
+      unit: 'test/unit/*.spec.js',
+      functional: 'test/functional/*.spec.js'
+    }
     this._ignoreTests = Env.get('IGNORE_TESTS', [])
     this._filterCallback = null
   }
@@ -52,34 +55,38 @@ class Cli {
   }
 
   /**
-   * Define a glob pattern to be used for loading
-   * unit tests
+   * Returns a reference to all the registered groups
    *
-   * @method unit
+   * @method getGroups
    *
-   * @param  {String} glob
-   *
-   * @chainable
+   * @return {Object}
    */
-  unit (glob) {
-    debug('setting unit tests glob as %s', glob)
-    this._unitTests = glob
-    return this
+  getGroups () {
+    return this._testGroups
   }
 
   /**
-   * Define a glob to be used for loading functional
-   * tests
+   * Reset groups to a custom map
    *
-   * @method al
+   * @method setGroups
+   */
+  setGroups (groups) {
+    this._testGroups = groups
+  }
+
+  /**
+   * Define glob for a group of tests
    *
+   * @method group
+   *
+   * @param  {String} name
    * @param  {String} glob
    *
    * @chainable
    */
-  functional (glob) {
-    debug('setting functional tests glob as %s', glob)
-    this._functionalTests = glob
+  group (name, glob) {
+    debug('setting %s tests glob as %s', name, glob)
+    this._testGroups[name] = glob
     return this
   }
 
@@ -114,7 +121,7 @@ class Cli {
    * @return {Array}
    */
   async getTestFiles () {
-    const includes = [this._unitTests, this._functionalTests].filter((test) => !!test)
+    const includes = _.filter(this._testGroups, (test) => !!test)
     const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
 
     const files = await globby(this._getGlob(includes, excludes), {
@@ -126,6 +133,7 @@ class Cli {
      * Otherwise user is given a chance to filter test files.
      */
     if (typeof (this._filterCallback) !== 'function') {
+      debug('test files %j', files)
       return files
     }
 

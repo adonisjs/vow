@@ -29,41 +29,27 @@ test.group('Cli', (group) => {
   })
 
   test('set correct global for unit tests', (assert) => {
-    assert.equal(this.cli._unitTests, 'test/unit/*.spec.js')
+    assert.equal(this.cli._testGroups.unit, 'test/unit/*.spec.js')
   })
 
   test('set correct global for functional tests', (assert) => {
-    assert.equal(this.cli._functionalTests, 'test/functional/*.spec.js')
+    assert.equal(this.cli._testGroups.functional, 'test/functional/*.spec.js')
   })
 
   test('set correct global for test files to be ignored', (assert) => {
     assert.deepEqual(this.cli._ignoreTests, [])
   })
 
-  test('use env variable for unit tests glob', (assert) => {
-    const env = new Env()
-    env.set('UNIT_TESTS', 'unit/**/*.js')
-    const cli = new Cli(env, new Helpers(path.join(__dirname)))
-    assert.equal(cli._unitTests, 'unit/**/*.js')
-  })
-
-  test('use env variable for functional tests glob', (assert) => {
-    const env = new Env()
-    env.set('FUNCTIONAL_TESTS', 'functional/**/*.js')
-    const cli = new Cli(env, new Helpers(path.join(__dirname)))
-    assert.equal(cli._functionalTests, 'functional/**/*.js')
-  })
-
   test('define different glob for unit tests', (assert) => {
     const cli = new Cli(new Env(), new Helpers(path.join(__dirname)))
-    cli.unit('unit/**/*.js')
-    assert.equal(cli._unitTests, 'unit/**/*.js')
+    cli.group('unit', 'unit/**/*.js')
+    assert.equal(cli._testGroups.unit, 'unit/**/*.js')
   })
 
   test('define different glob for functional tests', (assert) => {
     const cli = new Cli(new Env(), new Helpers(path.join(__dirname)))
-    cli.functional('functional/**/*.js')
-    assert.equal(cli._functionalTests, 'functional/**/*.js')
+    cli.group('functional', 'functional/**/*.js')
+    assert.equal(cli._testGroups.functional, 'functional/**/*.js')
   })
 
   test('use env variable for ignore tests glob', (assert) => {
@@ -74,12 +60,12 @@ test.group('Cli', (group) => {
   })
 
   test('set proper glob for loading tests', (assert) => {
-    const glob = this.cli._getGlob([this.cli._unitTests])
+    const glob = this.cli._getGlob([this.cli._testGroups.unit])
     assert.deepEqual(glob, [path.join(this.helpers.appRoot(), 'test/unit/*.spec.js')])
   })
 
   test('exclude tests using glob', (assert) => {
-    const glob = this.cli._getGlob([this.cli._unitTests], ['test/unit/_skip.spec.js'])
+    const glob = this.cli._getGlob([this.cli._testGroups.unit], ['test/unit/_skip.spec.js'])
     assert.deepEqual(glob, [
       path.join(this.helpers.appRoot(), 'test/unit/*.spec.js'),
       `!${path.join(this.helpers.appRoot(), 'test/unit/_skip.spec.js')}`
@@ -152,7 +138,7 @@ test.group('Cli', (group) => {
 
     await fs.ensureFile(unitTestFile)
     await fs.ensureFile(functionalTestFile)
-    this.cli.unit(null)
+    this.cli.group('unit', null)
     const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [functionalTestFile])
   })
