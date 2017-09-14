@@ -94,6 +94,7 @@ module.exports = function (Config) {
      */
     assertStatus (expected) {
       this._assert.equal(this.status, expected)
+      return this
     }
 
     /**
@@ -107,6 +108,7 @@ module.exports = function (Config) {
      */
     assertText (expected) {
       this._assert.equal(this.text, expected)
+      return this
     }
 
     /**
@@ -124,6 +126,7 @@ module.exports = function (Config) {
       } catch (error) {
         this._assert.equal(this.text, expected)
       }
+      return this
     }
 
     /**
@@ -137,6 +140,7 @@ module.exports = function (Config) {
      */
     assertJSON (expected) {
       this._assert.deepEqual(this.body, expected)
+      return this
     }
 
     /**
@@ -150,6 +154,7 @@ module.exports = function (Config) {
      */
     assertJSONSubset (expected) {
       this._assert.containSubset(this.body, expected)
+      return this
     }
 
     /**
@@ -163,6 +168,7 @@ module.exports = function (Config) {
      */
     assertError (expected) {
       this.assertBody(expected)
+      return this
     }
 
     /**
@@ -178,6 +184,7 @@ module.exports = function (Config) {
     assertRedirect (expectedUrl) {
       const routes = this.redirects.map((url) => urlModule.parse(url).pathname)
       this._assert.include(routes, expectedUrl, `Request was not redirected to ${expectedUrl}`)
+      return this
     }
 
     /**
@@ -192,6 +199,7 @@ module.exports = function (Config) {
      */
     assertCookie (key, value) {
       this._assert.equal(this.cookies[key], value)
+      return this
     }
 
     /**
@@ -206,6 +214,7 @@ module.exports = function (Config) {
      */
     assertPlainCookie (key, value) {
       this._assert.equal(this.plainCookies[key], value)
+      return this
     }
 
     /**
@@ -220,6 +229,7 @@ module.exports = function (Config) {
      */
     assertHeader (key, value) {
       this._assert.equal(this.headers[key.toLowerCase()], value)
+      return this
     }
   }
 
