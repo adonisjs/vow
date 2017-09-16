@@ -30,10 +30,7 @@ module.exports = function (Config) {
     constructor (assert, headers) {
       super()
       this._assert = assert
-      this.headers = headers || {}
-      this._cookieString = this._parseCookies()
-      this._cookies = null
-      this._plainCookies = null
+      this.updateHeaders(headers)
     }
 
     /**
@@ -50,6 +47,22 @@ module.exports = function (Config) {
       const setCookieHeader = this.headers['set-cookie'] || []
       const cookies = cookieParser.filterExpired(setCookieHeader.map((cookie) => cookieParser.parse(cookie)))
       return cookies.map((cookie) => `${cookie.key}=${cookie.value}`).join(';')
+    }
+
+    /**
+     * Update response headers and re-evaluate cookies
+     *
+     * @method updateHeaders
+     *
+     * @param  {Object}      headers
+     *
+     * @return {void}
+     */
+    updateHeaders (headers) {
+      this.headers = headers || {}
+      this._cookieString = this._parseCookies()
+      this._cookies = null
+      this._plainCookies = null
     }
 
     /**
