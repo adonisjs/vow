@@ -1,5 +1,7 @@
 'use strict'
 
+const cheerio = require('cheerio')
+
 /*
  * adonis-vow
  *
@@ -77,6 +79,14 @@ module.exports = function (BaseResponse) {
      */
     get redirects () {
       return this._res.redirects
+    }
+
+    find (selector) {
+      if (!this.cheerio) {
+        this.finder = cheerio.load(this.text)
+      }
+
+      return this.finder(selector)
     }
   }
   return ApiResponse
