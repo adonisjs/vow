@@ -82,7 +82,7 @@ class MakeTest extends Command {
      * defined
      */
     if (!unit && !functional) {
-      type = await this.chioce('Select the type of test to create', [
+      type = await this.choice('Select the type of test to create', [
         {
           name: 'Unit test',
           value: 'unit'
@@ -130,9 +130,7 @@ class MakeTest extends Command {
    */
   async handle ({ name }, { unit, functional }) {
     const basePath = await this._getFilePath(unit, functional)
-    name = `${_.upperFirst(_.camelCase(name))}.spec.js`
-
-    const testPath = path.join(basePath, name)
+    const testPath = path.join(basePath, `${_.lowerCase(_.kebabCase(name))}.spec.js`)
     const incrementalPath = testPath.replace(process.cwd(), '').replace(path.sep, '')
 
     try {

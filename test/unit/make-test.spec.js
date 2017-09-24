@@ -20,14 +20,14 @@ test.group('Make test', (group) => {
   test('create a test file', async (assert) => {
     const make = new MakeTest()
     await make.handle({ name: 'Foo' }, { unit: true })
-    const exists = await make.pathExists(path.join(__dirname, './sample/test/unit/Foo.spec.js'))
+    const exists = await make.pathExists(path.join(__dirname, './sample/test/unit/foo.spec.js'))
     assert.isTrue(exists)
   })
 
   test('create a functional test file', async (assert) => {
     const make = new MakeTest()
     await make.handle({ name: 'Bar' }, { functional: true, unit: true })
-    const exists = await make.pathExists(path.join(__dirname, './sample/test/functional/Bar.spec.js'))
+    const exists = await make.pathExists(path.join(__dirname, './sample/test/functional/bar.spec.js'))
     assert.isTrue(exists)
   })
 
