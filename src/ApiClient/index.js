@@ -30,7 +30,7 @@ class ApiClient {
 
 requestMethods.forEach((method) => {
   ApiClient.prototype[method] = function (url) {
-    url = /^http(s)?/.test(url) ? url : `${process.env.TEST_SERVER_URL}${url}`
+    url = /^http(s)?/.test(url) ? url : `${process.env.TEST_SERVER_URL}/${url.replace(/^\//, '')}`
     return new this.Request(url, method, this._assert)
   }
 })
