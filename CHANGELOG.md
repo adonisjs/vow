@@ -1,3 +1,14 @@
+<a name="1.0.9"></a>
+## [1.0.9](https://github.com/adonisjs/adonis-vow/compare/v1.0.8...v1.0.9) (2017-09-24)
+
+
+### Bug Fixes
+
+* **command:** fix `chioce` to `choice` typo ([00f0674](https://github.com/adonisjs/adonis-vow/commit/00f0674))
+* **command:** fix failing tests ([a7fff34](https://github.com/adonisjs/adonis-vow/commit/a7fff34))
+
+
+
 <a name="1.0.8"></a>
 ## [1.0.8](https://github.com/adonisjs/adonis-vow/compare/v1.0.7...v1.0.8) (2017-09-16)
 
