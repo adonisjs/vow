@@ -82,7 +82,7 @@ class MakeTest extends Command {
      * defined
      */
     if (!unit && !functional) {
-      type = await this.chioce('Select the type of test to create', [
+      type = await this.choice('Select the type of test to create', [
         {
           name: 'Unit test',
           value: 'unit'
