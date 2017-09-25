@@ -1,3 +1,13 @@
+<a name="1.0.10"></a>
+## [1.0.10](https://github.com/adonisjs/adonis-vow/compare/v1.0.9...v1.0.10) (2017-09-25)
+
+
+### Bug Fixes
+
+* **make:test:** fix casing issue ([bbd7a32](https://github.com/adonisjs/adonis-vow/commit/bbd7a32))
+
+
+
 <a name="1.0.9"></a>
 ## [1.0.9](https://github.com/adonisjs/adonis-vow/compare/v1.0.8...v1.0.9) (2017-09-24)
 
