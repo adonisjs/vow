@@ -177,4 +177,12 @@ test.group('Suite', (group) => {
     const request1 = new suite1.Request()
     assert.isUndefined(request1.foo)
   })
+
+  test('adding suite timeout to 0 should add timeout to test', (assert) => {
+    props.grep = 'bar'
+    const suite = new Suite('foo')
+    suite.timeout(0)
+    const t = suite.test('foo')
+    assert.equal(t._timeout, 0)
+  })
 })

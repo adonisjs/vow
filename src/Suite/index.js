@@ -140,7 +140,7 @@ class Suite {
      * Add timeout to the test when suite has timeout
      * on it.
      */
-    if (this._explicitTimeout) {
+    if (this._explicitTimeout !== null && this._explicitTimeout !== undefined) {
       test.timeout(this._explicitTimeout)
     }
 

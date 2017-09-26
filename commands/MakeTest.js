@@ -135,7 +135,7 @@ class MakeTest extends Command {
 
     try {
       await this._ensureInProjectRoot()
-      await this._generateTest(testPath, name)
+      await this._generateTest(testPath, _.startCase(name))
       this.completed('create', incrementalPath)
 
       /**
