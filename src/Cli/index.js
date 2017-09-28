@@ -28,8 +28,8 @@ class Cli {
   constructor (Env, Helpers) {
     this.projectRoot = Helpers.appRoot()
     this._testGroups = {
-      unit: 'test/unit/*.spec.js',
-      functional: 'test/functional/*.spec.js'
+      unit: 'test/unit/**/*.spec.js',
+      functional: 'test/functional/**/*.spec.js'
     }
     this._ignoreTests = Env.get('IGNORE_TESTS', [])
     this._filterCallback = null
