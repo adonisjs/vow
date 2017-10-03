@@ -218,6 +218,20 @@ module.exports = function (BaseRequest, Response) {
       return this
     }
 
+    /**
+     * Add accepts header
+     *
+     * @method accept
+     *
+     * @param  {String} value
+     *
+     * @chainable
+     */
+    accept (...args) {
+      this._agent.accept(...args)
+      return this
+    }
+
     /* istanbul ignore next */
     /**
      * Set `Access-Control-Allow-Origin` header
