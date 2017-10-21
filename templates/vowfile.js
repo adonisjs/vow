@@ -14,7 +14,7 @@
 // const ace = require('@adonisjs/ace')
 
 module.exports = (cli, runner) => {
-  runner.before(() => {
+  runner.before(async () => {
     /*
     |--------------------------------------------------------------------------
     | Start the server
@@ -37,7 +37,7 @@ module.exports = (cli, runner) => {
     // await ace.call('migration:run')
   })
 
-  runner.after(() => {
+  runner.after(async () => {
     /*
     |--------------------------------------------------------------------------
     | Shutdown server
