@@ -113,13 +113,13 @@ module.exports = function (Config) {
     /**
      * Asserts the response contains something
      *
-     * @method assertTSee
+     * @method assertTextHas
      *
      * @param  {String}   expected
      *
      * @return {void}
      */
-    assertSee (expected) {
+    assertTextHas (expected) {
       this._assert.include(this.text, expected)
       return this
     }
