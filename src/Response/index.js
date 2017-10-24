@@ -111,6 +111,20 @@ module.exports = function (Config) {
     }
 
     /**
+     * Asserts the response contains something
+     *
+     * @method assertTextHas
+     *
+     * @param  {String}   expected
+     *
+     * @return {void}
+     */
+    assertTextHas (expected) {
+      this._assert.include(this.text, expected)
+      return this
+    }
+
+    /**
      * Asserts the response text
      *
      * @method assertText
