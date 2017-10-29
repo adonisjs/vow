@@ -22,6 +22,6 @@ For help, run
 adonis test --help
 ```
 
-## Envrionment files
+## Environment files
 
 The vow provider attempts to load the `.env.test` file when running tests. Any variables placed inside this file will override the actual variables.

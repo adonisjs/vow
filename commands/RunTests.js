@@ -33,7 +33,7 @@ class RunTests extends Command {
     return `test
     { group?=all: Define the test groups to be executed. Multiple groups are seperated by comma }
     { -b, --bail: Stop running tests on first failure }
-    { -t, --timeout: Define a global timeout for all the tests }
+    { -t, --timeout=@value: Define a global timeout for all the tests }
     { -f, --files=@value: Pick only specific files. File names are seperated by comma }
     { -g, --grep=@value: Grep on tests title to run only selected tests }
     { --glob=@value: Define a custom glob to pick test files }`
@@ -109,10 +109,10 @@ class RunTests extends Command {
      * If there is a global timeout set it on
      * runner
      */
-    timeout = Number(timeout)
-    if (timeout && !isNaN(timeout)) {
-      debug('global timeout %d', timeout)
-      this.runner.timeout(timeout)
+    const numberedTimeout = Number(timeout)
+    if (timeout && !isNaN(numberedTimeout)) {
+      debug('global timeout %d', numberedTimeout)
+      this.runner.timeout(numberedTimeout)
     }
 
     /**
