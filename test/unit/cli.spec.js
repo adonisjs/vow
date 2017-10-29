@@ -29,11 +29,11 @@ test.group('Cli', (group) => {
   })
 
   test('set correct global for unit tests', (assert) => {
-    assert.equal(this.cli._testGroups.unit, 'test/unit/*.spec.js')
+    assert.equal(this.cli._testGroups.unit, 'test/unit/**/*.spec.js')
   })
 
   test('set correct global for functional tests', (assert) => {
-    assert.equal(this.cli._testGroups.functional, 'test/functional/*.spec.js')
+    assert.equal(this.cli._testGroups.functional, 'test/functional/**/*.spec.js')
   })
 
   test('set correct global for test files to be ignored', (assert) => {
@@ -61,13 +61,13 @@ test.group('Cli', (group) => {
 
   test('set proper glob for loading tests', (assert) => {
     const glob = this.cli._getGlob([this.cli._testGroups.unit])
-    assert.deepEqual(glob, [path.join(this.helpers.appRoot(), 'test/unit/*.spec.js')])
+    assert.deepEqual(glob, [path.join(this.helpers.appRoot(), 'test/unit/**/*.spec.js')])
   })
 
   test('exclude tests using glob', (assert) => {
     const glob = this.cli._getGlob([this.cli._testGroups.unit], ['test/unit/_skip.spec.js'])
     assert.deepEqual(glob, [
-      path.join(this.helpers.appRoot(), 'test/unit/*.spec.js'),
+      path.join(this.helpers.appRoot(), 'test/unit/**/*.spec.js'),
       `!${path.join(this.helpers.appRoot(), 'test/unit/_skip.spec.js')}`
     ])
   })
