@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/vow",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Test runner for Adonis framework with batteries included 🔋",
   "main": "index.js",
   "scripts": {
