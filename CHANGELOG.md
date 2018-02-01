@@ -1,3 +1,20 @@
+<a name="1.0.14"></a>
+## [1.0.14](https://github.com/adonisjs/adonis-vow/compare/v1.0.12...v1.0.14) (2018-02-01)
+
+
+### Bug Fixes
+
+* **instruction:** typo ([#3](https://github.com/adonisjs/adonis-vow/issues/3)) ([bf855dd](https://github.com/adonisjs/adonis-vow/commit/bf855dd))
+* **runtest:** accept and format timeouts properly ([2952d39](https://github.com/adonisjs/adonis-vow/commit/2952d39)), closes [#10](https://github.com/adonisjs/adonis-vow/issues/10)
+
+
+### Features
+
+* **cli:** extend glob to cover subdirectories ([cce2055](https://github.com/adonisjs/adonis-vow/commit/cce2055))
+* **response:** add assertSee ([#7](https://github.com/adonisjs/adonis-vow/issues/7)) ([0cf627f](https://github.com/adonisjs/adonis-vow/commit/0cf627f))
+
+
+
 <a name="1.0.13"></a>
 ## [1.0.13](https://github.com/adonisjs/adonis-vow/compare/v1.0.12...v1.0.13) (2017-10-29)
 
