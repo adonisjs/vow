@@ -1,3 +1,8 @@
+<a name="1.0.15"></a>
+## [1.0.15](https://github.com/adonisjs/adonis-vow/compare/v1.0.14...v1.0.15) (2018-02-07)
+
+
+
 <a name="1.0.14"></a>
 ## [1.0.14](https://github.com/adonisjs/adonis-vow/compare/v1.0.12...v1.0.14) (2018-02-01)
 
