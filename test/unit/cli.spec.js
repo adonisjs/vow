@@ -11,6 +11,7 @@
 
 const test = require('japa')
 const path = require('path')
+const upath = require('upath')
 const fs = require('fs-extra')
 const { Env, Helpers } = require('@adonisjs/sink')
 const Cli = require('../../src/Cli')
@@ -80,7 +81,10 @@ test.group('Cli', (group) => {
     await fs.ensureFile(functionalTestFile)
 
     const testsFiles = await this.cli.getTestFiles()
-    assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
+    assert.deepEqual(testsFiles, [
+      upath.normalize(unitTestFile),
+      upath.normalize(functionalTestFile)
+    ])
   })
 
   test('remove specific test files', async (assert) => {
@@ -94,7 +98,10 @@ test.group('Cli', (group) => {
 
     this.cli.filter('test/functional/*_skip.spec.js')
     const testsFiles = await this.cli.getTestFiles()
-    assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
+    assert.deepEqual(testsFiles, [
+      upath.normalize(unitTestFile),
+      upath.normalize(functionalTestFile)
+    ])
   })
 
   test('remove multiple test files', async (assert) => {
@@ -108,7 +115,7 @@ test.group('Cli', (group) => {
 
     this.cli.filter(['test/functional/*_skip.spec.js', 'test/unit/sample.spec.js'])
     const testsFiles = await this.cli.getTestFiles()
-    assert.deepEqual(testsFiles, [functionalTestFile])
+    assert.deepEqual(testsFiles, [upath.normalize(functionalTestFile)])
   })
 
   test('filter files using the filter callback', async (assert) => {
@@ -124,7 +131,10 @@ test.group('Cli', (group) => {
       return !file.endsWith('_skip.spec.js')
     })
     const testsFiles = await this.cli.getTestFiles()
-    assert.deepEqual(testsFiles, [unitTestFile, functionalTestFile])
+    assert.deepEqual(testsFiles, [
+      upath.normalize(unitTestFile),
+      upath.normalize(functionalTestFile)
+    ])
   })
 
   test('throw exception when filter method receives wrong data type', async (assert) => {
@@ -140,6 +150,6 @@ test.group('Cli', (group) => {
     await fs.ensureFile(functionalTestFile)
     this.cli.group('unit', null)
     const testsFiles = await this.cli.getTestFiles()
-    assert.deepEqual(testsFiles, [functionalTestFile])
+    assert.deepEqual(testsFiles, [upath.normalize(functionalTestFile)])
   })
 })

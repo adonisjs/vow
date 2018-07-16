@@ -62,8 +62,8 @@ class TestRunner {
     debug('running %d trait(s) for %s suite', suite.traits.length, suite.group._title)
     suite.traits.forEach((trait) => {
       const resolvedTrait = typeof (trait.action) === 'function'
-      ? trait.action
-      : resolver.resolve(trait.action)
+        ? trait.action
+        : resolver.resolve(trait.action)
 
       /**
        * If resolved trait is a class with handle
