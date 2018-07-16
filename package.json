@@ -36,7 +36,8 @@
     "nyc": "^12.0.2",
     "pkg-ok": "^2.2.0",
     "semver": "^5.5.0",
-    "standard": "^11.0.1"
+    "standard": "^11.0.1",
+    "upath": "^1.1.0"
   },
   "dependencies": {
     "chai-subset": "^1.6.0",
