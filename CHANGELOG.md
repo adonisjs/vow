@@ -1,3 +1,13 @@
+<a name="1.0.16"></a>
+## [1.0.16](https://github.com/adonisjs/adonis-vow/compare/v1.0.15...v1.0.16) (2018-07-16)
+
+
+### Features
+
+* **test:** add test.failing and test.skip methods ([e42621b](https://github.com/adonisjs/adonis-vow/commit/e42621b))
+
+
+
 <a name="1.0.15"></a>
 ## [1.0.15](https://github.com/adonisjs/adonis-vow/compare/v1.0.14...v1.0.15) (2018-02-07)
 
