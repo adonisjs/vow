@@ -77,4 +77,26 @@ jTest.group('Runner', (group) => {
     await runner.run()
     jAssert.deepEqual(called, ['beforeEach', 'afterEach', 'beforeEach', 'afterEach'])
   })
+
+  jTest('define failing test', async (jAssert) => {
+    const { test } = use('Test/Suite')('My Sample suite')
+
+    const runner = use('Test/Runner')
+    test.failing('2 + 2 is 4', function ({ assert }) {
+      assert.equal(2 + 2, 5)
+    })
+
+    await runner.run()
+  })
+
+  jTest('define skip test', async (jAssert) => {
+    const { test } = use('Test/Suite')('My Sample suite')
+
+    const runner = use('Test/Runner')
+    test.skip('2 + 2 is 4', function ({ assert }) {
+      assert.equal(2 + 2, 5)
+    })
+
+    await runner.run()
+  })
 })

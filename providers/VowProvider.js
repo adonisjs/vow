@@ -67,8 +67,13 @@ class VowProvider extends ServiceProvider {
          * and `this` resolves to undefined.
          */
         return _.transform(Object.getOwnPropertyNames(Object.getPrototypeOf(suite)), (result, prop) => {
-          result[prop] = function (...args) {
-            return suite[prop](...args)
+          if (prop === 'test') {
+            const testFn = (...args) => suite[prop](...args)
+            testFn.failing = (...args) => suite.failing(...args)
+            testFn.skip = (...args) => suite.skip(...args)
+            result[prop] = testFn
+          } else {
+            result[prop] = (...args) => suite[prop](...args)
           }
         }, {})
       }
