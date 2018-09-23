@@ -137,6 +137,22 @@ test.group('Api Response', (group) => {
     server.close()
   })
 
+  test('assert response plain cookies exists', async (assert) => {
+    assert.plan(1)
+    const server = http.createServer((req, res) => {
+      nodeCookie.create(res, 'total', 20)
+      res.end()
+    }).listen(PORT)
+
+    const config = new Config()
+    const BaseResponse = BaseResponseManager(config)
+    const BaseRequest = BaseRequestManager(config)
+    const api = new ApiClient(BaseRequest, BaseResponse, assert)
+    const response = await api.get('/').end()
+    response.assertPlainCookieExists('total')
+    server.close()
+  })
+
   test('assert response encrypted cookies', async (assert) => {
     assert.plan(1)
     const config = new Config()
@@ -152,6 +168,24 @@ test.group('Api Response', (group) => {
     const api = new ApiClient(BaseRequest, BaseResponse, assert)
     const response = await api.get('/').end()
     response.assertCookie('total', 20)
+    server.close()
+  })
+
+  test('assert response encrypted cookies exists', async (assert) => {
+    assert.plan(1)
+    const config = new Config()
+    config.set('app.appKey', 'averylongrandomkey')
+
+    const server = http.createServer((req, res) => {
+      nodeCookie.create(res, 'total', 20, {}, config.get('app.appKey'), true)
+      res.end()
+    }).listen(PORT)
+
+    const BaseResponse = BaseResponseManager(config)
+    const BaseRequest = BaseRequestManager(config)
+    const api = new ApiClient(BaseRequest, BaseResponse, assert)
+    const response = await api.get('/').end()
+    response.assertCookieExists('total')
     server.close()
   })
 
