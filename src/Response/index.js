@@ -245,6 +245,34 @@ module.exports = function (Config) {
     }
 
     /**
+     * Asserts the cookie exists.
+     *
+     * @method assertCookieExists
+     *
+     * @param  {String}     key
+     *
+     * @return {this}
+     */
+    assertCookieExists (key) {
+      this._assert.exists(this.cookies[key])
+      return this
+    }
+
+    /**
+     * Asserts the plain cookie exists
+     *
+     * @method assertPlainCookieExists
+     *
+     * @param  {String}          key
+     *
+     * @return {this}
+     */
+    assertPlainCookieExists (key) {
+      this._assert.exists(this.plainCookies[key])
+      return this
+    }
+
+    /**
      * Assert header value
      *
      * @method assertHeader
