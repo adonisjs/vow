@@ -28,7 +28,7 @@ Assertion.use(require('chai-subset'))
 class TestRunner {
   constructor (Env) {
     this.clear()
-    this._reporter = Env.get('REPORTER', reporters.list)
+    this._reporter = reporters[Env.get('REPORTER', 'list')]
   }
 
   /**
