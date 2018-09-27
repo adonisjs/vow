@@ -11,6 +11,7 @@
 
 const test = require('japa')
 const { setupResolver, Env, Config } = require('@adonisjs/sink')
+const { InvalidArgumentException } = require('@adonisjs/generic-exceptions')
 const { ioc } = require('@adonisjs/fold')
 const Runner = require('../../src/Runner')
 const props = require('../../lib/props')
@@ -307,4 +308,12 @@ test.group('Runner', (group) => {
     await this.runner.run()
     assert.deepEqual(called, ['group_start', 'test_start', 'run_test', 'test_end', 'group_end'])
   })
+})
+
+test('run runner reporter must be a function', async (assert) => {
+  try {
+    this.runner.reporter('Not a function')
+  } catch (error) {
+    assert.instanceOf(error, InvalidArgumentException)
+  }
 })
