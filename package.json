@@ -43,7 +43,7 @@
     "chai-subset": "^1.6.0",
     "debug": "^3.1.0",
     "globby": "^8.0.1",
-    "japa": "link:.yalc/japa",
+    "japa": "^1.0.6",
     "lodash": "^4.17.10",
     "macroable": "^1.0.0",
     "node-cookie": "^2.1.0",

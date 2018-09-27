@@ -10,7 +10,6 @@
 */
 
 const { Runner, reporters, Assertion } = require('japa/api')
-const { InvalidArgumentException } = require('@adonisjs/generic-exceptions')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:vow:runner')
@@ -89,9 +88,6 @@ class TestRunner {
    * @private
    */
   reporter (reporterFn) {
-    if (typeof (reporterFn) !== 'function') {
-      throw new InvalidArgumentException('Reporter must be a function that accepts an emitter')
-    }
     this._reporter = reporterFn
   }
 
