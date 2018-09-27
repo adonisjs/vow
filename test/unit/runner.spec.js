@@ -283,7 +283,7 @@ test.group('Runner', (group) => {
     const suite = this.runner.suite('sample')
 
     suite.test('test', function () {
-      called.push("run_test")
+      called.push('run_test')
     })
 
     this.runner.reporter(function (emitter) {
