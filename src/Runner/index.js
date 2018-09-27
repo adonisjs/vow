@@ -81,6 +81,17 @@ class TestRunner {
   }
 
   /**
+   * Set the reporter function to a custom one
+   *
+   * @method reporter
+   *
+   * @private
+   */
+  reporter (reporterFn) {
+    this._reporter = reporterFn
+  }
+
+  /**
    * Clear properties of runner.
    *
    * @method clear
