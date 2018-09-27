@@ -11,6 +11,7 @@
 
 const test = require('japa')
 const { setupResolver, Env, Config } = require('@adonisjs/sink')
+const { InvalidArgumentException } = require('@adonisjs/generic-exceptions')
 const { ioc } = require('@adonisjs/fold')
 const Runner = require('../../src/Runner')
 const props = require('../../lib/props')
@@ -277,4 +278,42 @@ test.group('Runner', (group) => {
     const emitter = new EventEmitter()
     this.runner.emitter(emitter)
   })
+
+  test('run runner set custom reporter', async (assert) => {
+    const called = []
+    const suite = this.runner.suite('sample')
+
+    suite.test('test', function () {
+      called.push('run_test')
+    })
+
+    this.runner.reporter(function (emitter) {
+      emitter.on('group:start', () => {
+        called.push('group_start')
+      })
+
+      emitter.on('group:end', () => {
+        called.push('group_end')
+      })
+
+      emitter.on('test:start', () => {
+        called.push('test_start')
+      })
+
+      emitter.on('test:end', () => {
+        called.push('test_end')
+      })
+    })
+
+    await this.runner.run()
+    assert.deepEqual(called, ['group_start', 'test_start', 'run_test', 'test_end', 'group_end'])
+  })
+})
+
+test('run runner reporter must be a function', async (assert) => {
+  try {
+    this.runner.reporter('Not a function')
+  } catch (error) {
+    assert.instanceOf(error, InvalidArgumentException)
+  }
 })

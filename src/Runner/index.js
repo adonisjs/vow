@@ -10,6 +10,7 @@
 */
 
 const { Runner, reporters, Assertion } = require('japa/api')
+const { InvalidArgumentException } = require('@adonisjs/generic-exceptions')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:vow:runner')
@@ -28,7 +29,7 @@ Assertion.use(require('chai-subset'))
 class TestRunner {
   constructor (Env) {
     this.clear()
-    this._reporter = Env.get('REPORTER', reporters.list)
+    this._reporter = reporters[Env.get('REPORTER', 'list')]
   }
 
   /**
@@ -78,6 +79,20 @@ class TestRunner {
        */
       resolvedTrait(suite, trait.options)
     })
+  }
+
+  /**
+   * Set the reporter function to a custom one
+   *
+   * @method reporter
+   *
+   * @private
+   */
+  reporter (reporterFn) {
+    if (typeof (reporterFn) !== 'function') {
+      throw new InvalidArgumentException('Reporter must be a function that accepts an emitter')
+    }
+    this._reporter = reporterFn
   }
 
   /**
