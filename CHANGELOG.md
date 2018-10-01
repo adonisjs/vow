@@ -1,3 +1,14 @@
+<a name="1.0.17"></a>
+## [1.0.17](https://github.com/adonisjs/adonis-vow/compare/v1.0.16...v1.0.17) (2018-10-01)
+
+
+### Features
+
+* **assert:** assert cookie exists ([#28](https://github.com/adonisjs/adonis-vow/issues/28)) ([0d99590](https://github.com/adonisjs/adonis-vow/commit/0d99590))
+* **runner:** allow customer reporters via runner.reporter ([1350106](https://github.com/adonisjs/adonis-vow/commit/1350106))
+
+
+
 <a name="1.0.16"></a>
 ## [1.0.16](https://github.com/adonisjs/adonis-vow/compare/v1.0.15...v1.0.16) (2018-07-16)
 
