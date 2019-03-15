@@ -36,7 +36,8 @@ class RunTests extends Command {
     { -t, --timeout=@value: Define a global timeout for all the tests }
     { -f, --files=@value: Pick only specific files. File names are seperated by comma }
     { -g, --grep=@value: Grep on tests title to run only selected tests }
-    { --glob=@value: Define a custom glob to pick test files }`
+    { --glob=@value: Define a custom glob to pick test files }
+    { -c, --custom=@value: Define a custom value for your test runner cli }`
   }
 
   /**
@@ -96,11 +97,13 @@ class RunTests extends Command {
    * @param  {String}  options.files
    * @param  {Boolean} options.grep
    * @param  {String}  options.glob
+   * @param  {String}  options.custom
    *
    * @return {void}
    */
-  async handle ({ group }, { bail, timeout, files, grep, glob }) {
+  async handle ({ group }, { bail, timeout, files, grep, glob, custom }) {
     const projectRoot = this.cli.projectRoot
+    this.cli.custom = custom
     this._requireVowFile(projectRoot)
 
     this.runner.bail(bail || false)
