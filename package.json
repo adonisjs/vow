@@ -44,7 +44,7 @@
     "globby": "^8.0.1",
     "japa": "1.0.6",
     "lodash": "^4.17.11",
-    "macroable": "^1.0.0",
+    "macroable": "^2.0.2",
     "node-cookie": "^2.1.1",
     "p-series": "^1.1.0",
     "superagent": "^4.0.0-beta.5"
