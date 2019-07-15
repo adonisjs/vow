@@ -156,7 +156,7 @@ class RunTests extends Command {
     /**
      * Getting all test files from the cli
      */
-    let testFiles = await this.cli.getTestFiles()
+    let testFiles = (await this.cli.getTestFiles()).sort()
 
     /**
      * If there are specific files defined, then grep on
