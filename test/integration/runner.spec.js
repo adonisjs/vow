@@ -57,11 +57,11 @@ jTest.group('Runner', (group) => {
 
     beforeEach(() => {
       called.push('beforeEach')
-    })
+    }).timeout(2000) // Timeout function should be callable from here
 
     afterEach(() => {
       called.push('afterEach')
-    })
+    }).timeout(2000) // Timeout function should be callable from here
 
     const runner = use('Test/Runner')
     test('2 + 2 is 4', function ({ assert }) {
