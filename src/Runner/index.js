@@ -30,6 +30,31 @@ class TestRunner {
   constructor (Env) {
     this.clear()
     this._reporter = reporters[Env.get('REPORTER', 'list')]
+    this._globalTraits = []
+  }
+
+  /**
+   * Add a new trait to the runner. Traits are executed
+   * for each suite before any of the tests are executed.
+   *
+   * A trait can be a `plain function`, `a class`, or
+   * reference to `ioc container binding`.
+   *
+   * Class and Ioc container binding should have a **handle**
+   * method on it.
+   *
+   * @method trait
+   *
+   * @param  {Function|String|Class} action
+   * @param  {Object} [options = {}]
+   *
+   * @return {void}
+   */
+  trait (action, options = {}) {
+    if (['string', 'function'].indexOf(typeof (action)) <= -1) {
+      throw new Error('runner.trait only accepts a function or reference to ioc container namespace')
+    }
+    this._globalTraits.push({ action, options })
   }
 
   /**
@@ -60,8 +85,9 @@ class TestRunner {
    * @private
    */
   _runTraits (suite) {
-    debug('running %d trait(s) for %s suite', suite.traits.length, suite.group._title)
-    suite.traits.forEach((trait) => {
+    const traits = this._globalTraits.concat(suite.traits)
+    debug('running %d trait(s) for %s suite', traits.length, suite.group._title)
+    traits.forEach((trait) => {
       const resolvedTrait = typeof (trait.action) === 'function'
         ? trait.action
         : resolver.resolve(trait.action)
