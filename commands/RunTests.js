@@ -163,11 +163,7 @@ class RunTests extends Command {
      * them to pick only those files
      */
     if (_.size(filesToPick)) {
-      testFiles = _.filter(testFiles, (file) => {
-        return !!_.find(filesToPick, (selectedFile) => {
-          return file.endsWith(selectedFile.trim())
-        })
-      })
+      testFiles = _.intersectionWith(testFiles, filesToPick, _.includes)
       debug('post --files filter %j', testFiles)
     }
 
