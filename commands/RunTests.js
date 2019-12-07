@@ -164,8 +164,8 @@ class RunTests extends Command {
      */
     if (_.size(filesToPick)) {
       testFiles = _.filter(testFiles, (file) => {
-        return !!_.find(filesToPick, (selectedFile) => {
-          return file.endsWith(selectedFile.trim())
+        return _.some(filesToPick, (selectedFile) => {
+          return file.includes(selectedFile.trim())
         })
       })
       debug('post --files filter %j', testFiles)
