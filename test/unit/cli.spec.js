@@ -165,8 +165,8 @@ test.group('Cli', (group) => {
 
     const testsFilesAll = await this.cli.getTestFiles(['sample'])
     assert.deepEqual(testsFilesAll, [
-      upath.normalize(unitTestFileTwo),
-      upath.normalize(unitTestFileOne)
+      upath.normalize(unitTestFileOne),
+      upath.normalize(unitTestFileTwo)
     ])
   })
 })
