@@ -137,7 +137,6 @@ class Cli {
       testFiles = testFiles.filter(this._filterCallback)
     }
 
-
     /**
      * If there are specific files defined, then grep on
      * them to pick only those files
