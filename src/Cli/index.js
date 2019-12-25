@@ -118,13 +118,14 @@ class Cli {
    *
    * @method getTestFiles
    *
+   * @param  {Array} filesToPick
    * @return {Array}
    */
-  async getTestFiles () {
+  async getTestFiles (filesToPick = []) {
     const includes = _.filter(this._testGroups, (test) => !!test)
     const excludes = typeof (this._ignoreTests) === 'string' ? [this._ignoreTests] : this._ignoreTests
 
-    const files = await globby(this._getGlob(includes, excludes), {
+    let testFiles = await globby(this._getGlob(includes, excludes), {
       realpath: true
     })
 
@@ -132,13 +133,25 @@ class Cli {
      * If there is no filter callback, all files are returned
      * Otherwise user is given a chance to filter test files.
      */
-    if (typeof (this._filterCallback) !== 'function') {
-      debug('test files %j', files)
-      return files
+    if (typeof (this._filterCallback) === 'function') {
+      testFiles = testFiles.filter(this._filterCallback)
     }
 
-    const testFiles = files.filter(this._filterCallback)
+
+    /**
+     * If there are specific files defined, then grep on
+     * them to pick only those files
+     */
+    if (_.size(filesToPick)) {
+      testFiles = _.filter(testFiles, (file) => {
+        return _.some(filesToPick, (selectedFile) => {
+          return file.includes(selectedFile.trim())
+        })
+      })
+    }
+
     debug('test files %j', testFiles)
+
     return testFiles
   }
 }
