@@ -176,10 +176,10 @@ class Suite {
    *
    * @param  {Function} callback
    *
-   * @return {void}
+   * @return {Object} Instance of japa hook
    */
   beforeEach (callback) {
-    this.group.beforeEach(callback)
+    return this.group.beforeEach(callback)
   }
 
   /**
@@ -190,10 +190,10 @@ class Suite {
    *
    * @param  {Function} callback
    *
-   * @return {void}
+   * @return {Object} Instance of japa hook
    */
   afterEach (callback) {
-    this.group.afterEach(callback)
+    return this.group.afterEach(callback)
   }
 
   /**
@@ -204,10 +204,10 @@ class Suite {
    *
    * @param  {Function} callback
    *
-   * @return {void}
+   * @return {Object} Instance of japa hook
    */
   after (callback) {
-    this.group.after(callback)
+    return this.group.after(callback)
   }
 
   /**
@@ -218,10 +218,10 @@ class Suite {
    *
    * @param  {Function} callback
    *
-   * @return {void}
+   * @return {Object} Instance of japa hook
    */
   before (callback) {
-    this.group.before(callback)
+    return this.group.before(callback)
   }
 
   /**
