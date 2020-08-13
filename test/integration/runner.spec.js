@@ -98,5 +98,16 @@ jTest.group('Runner', (group) => {
     })
 
     await runner.run()
+  });
+  
+  jTest('define skip test through test function', async (jAssert) => {
+    const { test } = use('Test/Suite')('My Sample suite')
+
+    const runner = use('Test/Runner')
+    test('2 + 2 is 4', function ({ assert }) {
+      assert.equal(2 + 2, 5)
+    },true)
+
+    await runner.run()
   })
 })
