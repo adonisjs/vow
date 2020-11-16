@@ -266,3 +266,55 @@ test.group('Api Response', (group) => {
     server.close()
   })
 })
+
+test.group('API Response assertions (meta)', (group) => {
+  group.before(() => {
+    process.env.TEST_SERVER_URL = `http://localhost:${PORT}`
+  })
+
+  test('assert response error to contain error text if status is >= 400', async (assert) => {
+    assert.plan(2)
+    const config = new Config()
+    config.set('app.appKey', 'averylongrandomkey')
+
+    const server = http.createServer((req, res) => {
+      res.writeHead(500)
+      res.end('x is undefined')
+    }).listen(PORT)
+
+    const BaseResponse = BaseResponseManager(config)
+    const BaseRequest = BaseRequestManager(config)
+    const api = new ApiClient(BaseRequest, BaseResponse, assert)
+    const response = await api.get('/').end()
+
+    try {
+      response.assertStatus(200)
+    } catch (error) {
+      assert.equal(error.message, '(x is undefined): expected 500 to equal 200')
+    }
+
+    server.close()
+  })
+
+  test('assert response error to not contain error text if status is < 400', async (assert) => {
+    assert.plan(2)
+    const config = new Config()
+    config.set('app.appKey', 'averylongrandomkey')
+
+    const server = http.createServer((req, res) => res.end()).listen(PORT)
+
+    const BaseResponse = BaseResponseManager(config)
+    const BaseRequest = BaseRequestManager(config)
+    const api = new ApiClient(BaseRequest, BaseResponse, assert)
+    const response = await api.get('/').end()
+
+    try {
+      response.assertStatus(204)
+    } catch (error) {
+      server.close()
+      assert.equal(error.message, 'expected 200 to equal 204')
+    }
+
+    server.close()
+  })
+})

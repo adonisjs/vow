@@ -106,7 +106,8 @@ module.exports = function (Config) {
      * @return {void}
      */
     assertStatus (expected) {
-      this._assert.equal(this.status, expected)
+      const message = this.status >= 400 ? `(${this.text})` : ''
+      this._assert.equal(this.status, expected, message)
       return this
     }
 
