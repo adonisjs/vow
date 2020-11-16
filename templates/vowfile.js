@@ -37,6 +37,16 @@ module.exports = (cli, runner) => {
     // await ace.call('migration:run', {}, { silent: true })
   })
 
+  /*
+    |--------------------------------------------------------------------------
+    | Run migrations
+    |--------------------------------------------------------------------------
+    |
+    | Reset the database after each test
+    |
+  */
+  // runner.trait('DatabaseTransactions')
+
   runner.after(async () => {
     /*
     |--------------------------------------------------------------------------

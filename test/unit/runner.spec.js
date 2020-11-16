@@ -136,6 +136,17 @@ test.group('Runner', (group) => {
     assert.deepEqual(called, ['trait 1', 'trait 2'])
   })
 
+  test('run global traits before running any tests', async (assert) => {
+    const suite = this.runner.suite('sample')
+    const called = []
+
+    this.runner.trait(() => called.push('trait 1'))
+    suite.trait(() => called.push('trait 2'))
+
+    await this.runner.run()
+    assert.deepEqual(called, ['trait 1', 'trait 2'])
+  })
+
   test('attach values to suite when running suite traits', async (assert) => {
     const suite = this.runner.suite('sample')
     const called = []
