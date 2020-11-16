@@ -231,11 +231,12 @@ class Suite {
    *
    * @param  {String}   title
    * @param  {Function} callback
+   * @param  {Boolean} skip
    *
    * @return {Object} Instance of japa test
    */
-  test (title, callback) {
-    return this._addTest(title, callback, false, false)
+  test (title, callback, skip) {
+    return this._addTest(title, callback, Boolean(skip), false)
   }
 
   /**
