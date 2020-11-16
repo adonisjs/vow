@@ -152,4 +152,21 @@ test.group('Cli', (group) => {
     const testsFiles = await this.cli.getTestFiles()
     assert.deepEqual(testsFiles, [upath.normalize(functionalTestFile)])
   })
+
+  test('filter for files', async (assert) => {
+    const unitTestFileOne = path.join(this.helpers.appRoot(), 'test/unit/sample-one.spec.js')
+    const unitTestFileTwo = path.join(this.helpers.appRoot(), 'test/unit/sample-two.spec.js')
+
+    await fs.ensureFile(unitTestFileOne)
+    await fs.ensureFile(unitTestFileTwo)
+
+    const testsFiles = await this.cli.getTestFiles(['sample-one'])
+    assert.deepEqual(testsFiles, [upath.normalize(unitTestFileOne)])
+
+    const testsFilesAll = await this.cli.getTestFiles(['sample'])
+    assert.deepEqual(testsFilesAll, [
+      upath.normalize(unitTestFileOne),
+      upath.normalize(unitTestFileTwo)
+    ])
+  })
 })

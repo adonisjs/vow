@@ -156,20 +156,7 @@ class RunTests extends Command {
     /**
      * Getting all test files from the cli
      */
-    let testFiles = await this.cli.getTestFiles()
-
-    /**
-     * If there are specific files defined, then grep on
-     * them to pick only those files
-     */
-    if (_.size(filesToPick)) {
-      testFiles = _.filter(testFiles, (file) => {
-        return !!_.find(filesToPick, (selectedFile) => {
-          return file.endsWith(selectedFile.trim())
-        })
-      })
-      debug('post --files filter %j', testFiles)
-    }
+    const testFiles = await this.cli.getTestFiles(filesToPick)
 
     try {
       /**
