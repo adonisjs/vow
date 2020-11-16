@@ -24,4 +24,4 @@ adonis test --help
 
 ## Environment files
 
-The vow provider attempts to load the `.env.test` file when running tests. Any variables placed inside this file will override the actual variables.
+The vow provider attempts to load the `.env.testing` file when running tests. Any variables placed inside this file will override the actual variables.
