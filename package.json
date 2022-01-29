@@ -46,7 +46,7 @@
     "lodash": "^4.17.11",
     "macroable": "^1.0.0",
     "node-cookie": "^2.1.1",
-    "p-series": "^1.1.0",
+    "p-series": "^3.0.0",
     "superagent": "^4.0.0-beta.5"
   },
   "config": {
